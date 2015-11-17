@@ -1,4 +1,4 @@
-modules.exports = function(grunt) {
+module.exports = function(grunt) {
 	'use strict';
 
 	grunt.initConfig({
@@ -11,5 +11,5 @@ modules.exports = function(grunt) {
 
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 
-	grunt.registerTasks('default', ['jshint']);
+	grunt.registerTask('default', ['jshint']);
 }
