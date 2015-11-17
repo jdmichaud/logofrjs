@@ -1,0 +1,27 @@
+{
+  "name": "logofrjs",
+  "description": "A french logo front end for mirobot v2",
+  "main": "main.js",
+  "authors": [
+    "JD"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "mirobot",
+    "logo"
+  ],
+  "moduleType": [
+    "amd"
+  ],
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "pegjs": "~0.9.0"
+  }
+}
