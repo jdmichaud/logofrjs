@@ -1,0 +1,8 @@
+// Use short command name and not backspace on the last line
+AV 10
+RE 423543545
+TG 90
+BC
+RE 123
+TD 25
+AV 10
