@@ -33,6 +33,15 @@ module.exports = function(grunt) {
 				}
 			}
 		},
+		requirejs: {
+			dist: {
+				options: {
+					baseUrl: 'js',
+					out: 'dist/js/app.js',
+					include: 'main'
+				}
+			}
+		},
 		watch: {
 			files: ['<%= jshint.file.src %>'],
 			tasks: ['jshint']
@@ -43,6 +52,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-watch');
+	grunt.loadNpmTasks('grunt-contrib-requirejs');
 
-	grunt.registerTask('default', ['jshint', 'concat', 'uglify']);
+	grunt.registerTask('default', ['jshint', 'uglify', 'requirejs']);
 }
