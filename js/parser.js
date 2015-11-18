@@ -1,5 +1,5 @@
 var PEG = require('pegjs');
-var logoGrammar = require('./logo-grammar').grammar
+var logoGrammar = require('./logo-grammar').grammar;
 
 define(function() {
 	'use strict';
@@ -9,5 +9,5 @@ define(function() {
 			var parser = PEG.buildParser(logoGrammar);
 			return parser.parse(content);
 		}
-	}
+	};
 });

@@ -6,6 +6,9 @@ module.exports = function(grunt) {
 		jshint: {
 			file: {
 				src: ['js/**/*.js']
+			},
+			options: {
+				multistr: true,
 			}
 		},
 		concat: {
@@ -38,7 +41,7 @@ module.exports = function(grunt) {
 				options: {
 					baseUrl: 'js',
 					out: 'dist/js/app.js',
-					include: 'main'
+					include: 'logofr'
 				}
 			}
 		},

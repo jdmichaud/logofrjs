@@ -1,3 +1,10 @@
+// Jean-Daniel Michaud - 2015
+//
+// This file is the main entry point of the logofrjs node application.
+// The node application is to be run in node as a standalone script. It will
+// parse the file passed as parameter and interpret it as a french LOGO program.
+// TODO: explain the mirobot part
+
 var requirejs = require('requirejs');
 
 requirejs.config({
@@ -19,14 +26,17 @@ requirejs(['fs', 'parser'], function (fs, parser) {
 		usage();
 	} else {
 		// Read file passed as parameter 
-		fs.readFile(process.argv[1], 'utf8', function (err, data) {
+		fs.readFile(process.argv[2], 'utf8', function (err, data) {
 			if (err) {
-				return console.log(err);
+				if (err.errno === -2) {
+					return console.log("Le fichier", err.path, "n'existe pas");
+				} else {
+					return console.log(err);
+				}
 			}
-			console.log("parse ", process.argv[1]);
+			console.log("parse", process.argv[2]);
 			// Parse the loaded file
 			parser.parse(data);
 		});
-		console.log("do something with ", process.argv[1]);
 	}
 });
