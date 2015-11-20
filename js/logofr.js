@@ -3,5 +3,6 @@
 // Main entry point for logofrjs in the Browser
 
 require('./parser', function(parser) {
-	console.log("Nothing for now");
+  parser.parse('test');
+  console.log("Nothing for now");
 });
