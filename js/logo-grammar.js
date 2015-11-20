@@ -13,12 +13,12 @@ define(function() {
     grammar:
 `
 program "program" =
-  ( instruction newline ) *
-//    return {
-//      type: "PROGRAM",
-//      instrutions: i
-//    };
-//  }
+  ( instruction ) * {
+    return {
+      type: "PROGRAM",
+      instrutions: i
+    };
+  }
 
 keyword =
   [A-Za-z]+
@@ -46,16 +46,16 @@ comment
 
 // Define what is an instruction
 instruction "instruction" =
-   k:keyword _ digits:integer
-  / k:keyword _
-  / comment
-  / newline
-//    return {
-//      type: "INSTRUCTION",
-//      command: k.join(""),
-//      arg: parseInt(digits.join(""), 10)
-//    };
-//  }
+   k:keyword _ digits:integer _ newline?
+  / k:keyword _ newline?
+  / comment _ newline?
+  / _ newline {
+    return {
+      type: "INSTRUCTION",
+      command: k.join(""),
+      arg: parseInt(digits.join(""), 10)
+    };
+  }
 `
   };
 });

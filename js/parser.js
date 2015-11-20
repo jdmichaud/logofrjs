@@ -22,7 +22,7 @@ define(function() {
           throw exception;
         }
       }
-      return {err: undefine, ast: ast};
+      return {err: undefined, ast: ast};
     }
   };
 });
