@@ -23,7 +23,7 @@ var runFile = function(filename, fs, parser, debug) {
   } catch (err) {
     if (err) {
       if (err.errno === -2) {
-        return console.log('Le fichier', err.path, 'n'existe pas');
+        return console.log('Le fichier', err.path, 'n\'existe pas');
       }
       // Manage here non translated errors
       return console.log(err);
