@@ -6,12 +6,13 @@ module.exports = function(grunt) {
     jshint: {
       file: {
         src: [
+          'gruntfile.js',
           'js/**/*.js',
           '!js/logo-grammar.js' // jshint does not manage template string yet
         ]
       },
       options: {
-        multistr: true,
+        jshintrc: '.jshintrc'
       }
     },
     concat: {
