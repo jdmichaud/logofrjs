@@ -44,3 +44,6 @@ dist
 
 # Bower downloaded dependencies
 bower_components
+
+# Specific to logofrjs
+js/logo.js

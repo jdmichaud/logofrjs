@@ -52,11 +52,26 @@ module.exports = function(grunt) {
         }
       }
     },
+    peg: {
+      options: { trackLineAndColumn: true  },
+      example : {
+        src: "grammar/logo.peg",
+        dest: "js/logo.js",
+        options: {
+          wrapper: function (src, parser) {
+            return 'define("logo-grammar", [], function () { return ' + parser + ';  });';
+          }
+        }
+      }
+    },
     watch: {
       files: ['<%= jshint.file.src %>'],
       tasks: ['jshint']
     },
-    clean: { dist: [ 'dist' ] }
+    clean: { dist: [
+      'dist',
+      'js/logo.js'
+    ]}
   });
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -65,7 +80,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-peg');
 
-  grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'requirejs']);
+  grunt.registerTask('default', ['clean', 'jshint', 'peg']);
   //grunt.registerTask('default', ['jshint', 'requirejs']);
 }
