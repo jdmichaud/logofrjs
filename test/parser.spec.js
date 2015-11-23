@@ -1,4 +1,4 @@
-define(function (require) {
+define(['../js/parser.js'], function (parser) {
   'use strict';
 
   console.log("toto")
@@ -14,7 +14,7 @@ define(function (require) {
     ]
   }
 
-  var parser = require('../js/parser.js');
+  //var parser = require('../js/parser.js');
 
   describe('Parser test', function () {
     // Retrieve the file and filter only the ones that are parsable
@@ -23,9 +23,9 @@ define(function (require) {
     });
 
     it("shall be able to parse acceptable logo program", function () { 
-      for (test_file in test_files) {
+      test_files.forEach(function (test_file) {
         expect(parser.parse(test_file)).toBe(0);
-      }
+      });
     });
   });
 });

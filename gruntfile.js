@@ -6,14 +6,15 @@ module.exports = function(grunt) {
     jshint: {
       file: {
         src: [
+          'gruntfile.js',
           'js/**/*.js',
-          '!js/logo-grammar.js', // jshint does not manage template string yet
           'test/**/*.js'
         ]
       },
       options: {
         multistr: true,
-        esnext: true
+        esnext: true,
+        jshintrc: '.jshintrc'
       }
     },
     concat: {
@@ -28,7 +29,7 @@ module.exports = function(grunt) {
         separator: ';',
         // Setup a source map for easier debugging
         sourceMap: true
-      },
+      }
     },
     uglify: {
       dist: {
@@ -63,7 +64,10 @@ module.exports = function(grunt) {
       files: ['<%= jshint.file.src %>'],
       tasks: ['jshint']
     },
-    clean: { dist: [ 'dist' ] }
+    clean: { dist: [
+      'dist',
+      'js/logo.js'
+    ]}
   });
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -74,6 +78,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-karma');
 
-  grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'requirejs']);
+  grunt.registerTask('default', ['clean', 'jshint']);
   //grunt.registerTask('default', ['jshint', 'requirejs']);
 }

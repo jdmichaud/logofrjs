@@ -23,6 +23,8 @@ module.exports = function(config) {
 
     // list of files to exclude
     exclude: [
+      './js/main.js',
+      './js/parser.js'
     ],
 
 

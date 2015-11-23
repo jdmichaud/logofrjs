@@ -31,7 +31,7 @@ var runFile = function(filename, fs, parser, debug) {
   }
   console.log("parse", filename);
   // Parse the loaded file
-  var ret = parser.parse(content, debug);
+  var ret = parser.parse(fs, content, debug);
   if (ret.err) {
     // Error while walking the AST
     console.log(ret.err);

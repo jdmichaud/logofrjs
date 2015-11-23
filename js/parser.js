@@ -1,8 +1,8 @@
-var PEG = require('pegjs');
-var logoGrammar = require('./logo-grammar').grammar;
-
 define(function() {
   'use strict';
+
+  var PEG = require('pegjs');
+  var grammarFile = 'grammar/logo.peg'
 
   var e_errCode = {
     SYNTAX_ERROR: 1,
@@ -10,9 +10,11 @@ define(function() {
   };
 
   return {
-    parse: function(content, debug) {
+    parse: function(fs, content, debug) {
       // No debug by default
       if (debug === undefined) debug = false;
+      // Load the grammar
+      var logoGrammar = fs.readFileSync(grammarFile, 'utf8').toString();
       // Build parser from grammar
       var parser = PEG.buildParser(logoGrammar, { trace: debug } );
       var ast;

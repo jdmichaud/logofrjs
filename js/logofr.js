@@ -2,7 +2,7 @@
 //
 // Main entry point for logofrjs in the Browser
 
-require('./parser', function(parser) {
+require(['./parser'], function(parser) {
   parser.parse('test');
   console.log("Nothing for now");
 });
