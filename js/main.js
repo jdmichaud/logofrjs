@@ -35,9 +35,11 @@ var runFile = function(filename, fs, parser, debug) {
   if (ret.err) {
     // Error while walking the AST
     console.log(ret.err);
+    return ret.errno;
   } else {
     // TODO: do something with this AST
     console.log(ret.ast);
+    return 0;
   }
 };
 

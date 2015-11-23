@@ -4,16 +4,11 @@
 
 define(function() {
 
-  var astTypeEnum = {
-    INSTRUCTION: 0,
-    PROGRAM: 1
-  };
-
   return {
     grammar:
 `
-program "program" =
-  ( instruction ) * {
+program =
+  i:( instruction ) * {
     return {
       type: "PROGRAM",
       instrutions: i
@@ -21,7 +16,9 @@ program "program" =
   }
 
 keyword =
-  [A-Za-z]+
+  "AVANCE" / "AC" / "RECULE" / "RE" 
+  / "TOURNEDROITE" / "TD" / "TOURNEGAUCHE" / "TG"
+  / "LEVECRAYON" / "LC" / "BAISSECRAYON" / "BC"
 
 integer =
   [0-9]+
@@ -44,18 +41,36 @@ sourceCharacter
 comment
   = "//" (!newline sourceCharacter)*
 
-// Define what is an instruction
-instruction "instruction" =
-   k:keyword _ digits:integer _ newline?
-  / k:keyword _ newline?
-  / comment _ newline?
-  / _ newline {
+noarg_instruction =
+  k:keyword _ digits:integer _ newline? {
     return {
       type: "INSTRUCTION",
-      command: k.join(""),
+      command: k,
       arg: parseInt(digits.join(""), 10)
     };
   }
+
+arg_instruction =
+  k:keyword _ newline? {
+    return {
+      type: "INSTRUCTION",
+      command: k,
+    };
+  }
+
+null_instruction = 
+  comment _? newline? {
+    return {};
+  }
+  / _? newline {
+    return {};
+  }
+
+// Define what is an instruction
+instruction =
+  noarg_instruction
+  / arg_instruction
+  / null_instruction
 `
   };
 });
