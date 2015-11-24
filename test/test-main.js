@@ -3,18 +3,15 @@ var TEST_REGEXP = /(spec|test)\.js$/i;
 
 // Get a list of all the test files to include
 Object.keys(window.__karma__.files).forEach(function(file) {
+  console.log(file);
   if (TEST_REGEXP.test(file)) {
     // Normalize paths to RequireJS module names.
     // If you require sub-dependencies of test files to be loaded as-is (requiring file extension)
     // then do not normalize the paths
-    console.log("file: ", file);
     var normalizedTestModule = file.replace(/^\/base\/|\.js$/g, '');
-    console.log("normalizedTestModule: ", normalizedTestModule);
     allTestFiles.push(file);
   }
 });
-
-console.log(allTestFiles);
 
 require.config({
   // Karma serves files under /base, which is the basePath from your config file
