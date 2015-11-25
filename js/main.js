@@ -39,15 +39,18 @@ requirejs(['fs', 'commander', '../package.json', 'parser'],
     }
     console.log('parse', filename);
     // Parse the loaded file
-    var ret = parser.parse(fs, content, debug);
-    if (ret.err) {
+    var parseRet = parser.parse(fs, content, debug);
+    if (parseRet.err) {
       // Error while walking the AST
-      console.log(ret.err);
-      return ret.errno;
+      console.log(parseRet.err);
+      return parseRet.errno;
     } else {
       // TODO: do something with this AST
-      console.log(ret.ast);
-      parser.syntaxCheck(ret.ast);
+      var syntaxCheckRet = parser.syntaxCheck(parseRet.ast);
+      if (syntaxCheckRet.errCode !== 0) {
+        console.log(syntaxCheckRet.err);
+        return syntaxCheckRet.errno;
+      }
       return 0;
     }
   };

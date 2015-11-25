@@ -3,10 +3,12 @@ define(function() {
 
   var PEG = require('pegjs');
   var visitor = require('pegjs/lib/compiler/visitor');
+  var instruction = require('./instruction');
   var grammarFile = 'grammar/logo.peg';
 
-  var errCode = {
+  var eErrCode = {
     SYNTAX_ERROR: 1,
+    UNKNOWN_INSTRUCTION: 2,
     UNKNOWN_ERROR: 255
   };
 
@@ -32,9 +34,9 @@ define(function() {
                     '! Trouvé: "' + exception.found + '"' +
                     ' mais on attendait: "' +
                     exception.expected[0].description + '"';
-          return {err: err, errno: errCode.SYNTAX_ERROR, ast: {}};
+          return {err: err, errno: eErrCode.SYNTAX_ERROR, ast: {}};
         } else {
-          return {err: exception, errno: errCode.UNKNOWN_ERROR, ast: {}};
+          return {err: exception, errno: eErrCode.UNKNOWN_ERROR, ast: {}};
         }
       }
       return {err: undefined, ast: ast};
@@ -48,13 +50,27 @@ define(function() {
       // Build a custom visitor
       var check = visitor.build({
         PROGRAM: function(node) {
-          console.log('PROGRAM');
-          check(node.instructions);
-          return { errCode: 0, errString: '' };
+          for (var i = node.instructions.length - 1; i >= 0; i--) {
+            var ret = check(node.instructions[i]); 
+            // If an error code is returned, stop immediatly and returns the
+            // error
+            if (ret.errno !== 0) {
+              return ret;
+            }
+          };
+          return { errno: 0, err: '' };
         },
         INSTRUCTION: function(node) {
-          console.log('INSTRUCTION');
-          return { errCode: 0, errString: '' };
+          var matching = instruction.getMatchingInstruction(node.command);
+          if (matching === undefined) {
+            return { errno: eErrCode.UNKNOWN_INSTRUCTION, 
+                     err: 'Ligne ' + node.line + ': L\'instruction ' + 
+                                node.command + ' est inconnue' };
+          }
+          return { errno: 0, err: '' };
+        },
+        NOOP: function(node) { /* quietly ignored */ 
+          return { errno: 0, err: '' };
         }
       });
       // Call the visitor with the provided ast

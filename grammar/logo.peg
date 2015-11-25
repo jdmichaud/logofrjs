@@ -10,14 +10,8 @@ program =
     };
   }
 
-//  k:[a-zA-Z]+ { return k.join(''); }
 keyword =
-  "AVANCE" / "AV" / "avance" / "av"
-  / "RECULE" / "RE" / "recule" / "re"
-  / "TOURNEDROITE" / "TD" / "tournedroite" / "td"
-  / "TOURNEGAUCHE" / "TG" / "tournegauche" / "tg"
-  / "LEVECRAYON" / "LC" / "levecrayon" / "tc"
-  / "BAISSECRAYON" / "BC" / "baissecrayon" / "bc"
+  k:[a-zA-Z]+ { return k.join(''); }
 
 integer =
   [0-9]+
@@ -45,7 +39,8 @@ arg_instruction =
     return {
       type: "INSTRUCTION",
       command: k,
-      arg: parseInt(digits.join(""), 10)
+      arg: parseInt(digits.join(""), 10),
+      line: location().start.line
     };
   }
 
@@ -54,6 +49,7 @@ noarg_instruction =
     return {
       type: "INSTRUCTION",
       command: k,
+      line: location().start.line
     };
   }
 
