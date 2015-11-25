@@ -80,4 +80,4 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', ['clean', 'jshint']);
   //grunt.registerTask('default', ['jshint', 'requirejs']);
-}
+};

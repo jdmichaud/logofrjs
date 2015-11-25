@@ -6,7 +6,7 @@ program =
   i:( instruction ) * {
     return {
       type: "PROGRAM",
-      instrutions: i
+      instructions: i
     };
   }
 
@@ -59,10 +59,10 @@ noarg_instruction =
 
 null_instruction =
   comment _? newline? {
-    return {};
+    return { type: "NOOP" };
   }
   / _? newline {
-    return {};
+    return { type: "NOOP" };
   }
 
 // Define what is an instruction
