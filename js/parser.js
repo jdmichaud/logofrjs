@@ -9,8 +9,8 @@ define(function() {
   var eErrCode = {
     SYNTAX_ERROR: 1,
     UNKNOWN_INSTRUCTION: 2,
-		MISSING_ARGUMENT: 3,
-		USELESS_ARGUMENT: 4,
+    MISSING_ARGUMENT: 3,
+    USELESS_ARGUMENT: 4,
     UNKNOWN_ERROR: 255
   };
 
@@ -43,6 +43,7 @@ define(function() {
       }
       return {err: undefined, ast: ast};
     },
+
     // Analyze the AST to ensure the syntax is correct:
     // - Commands are known
     // - Arguments are properly formated
@@ -59,29 +60,29 @@ define(function() {
             if (ret.errno !== 0) {
               return ret;
             }
-          };
+          }
           return { errno: 0, err: '' };
         },
         INSTRUCTION: function(node) {
-					// Check for unknown instruction
+          // Check for unknown instruction
           var matching = instruction.getMatchingInstruction(node.command);
           if (matching === undefined) {
             return { errno: eErrCode.UNKNOWN_INSTRUCTION,
                      err: 'Ligne ' + node.line + ': L\'instruction "' +
-                                node.command + '" est inconnue' };
+                          node.command + '" est inconnue' };
           }
-					// Check an argument is present if necessary
-					if (matching.haveArgs && !node.hasOwnProperty('arg')) {
-						return { errno: eErrCode.MISSING_ARGUMENT,
-										 err: 'Ligne ' + node.line + ': La command "' +
-													 node.command + '" doit avoir un argument' };
-					}
-					// Check there is no argument if none expected
-					if (!matching.haveArgs && node.hasOwnProperty('arg')) {
-						return { errno: eErrCode.USELESS_ARGUMENT,
-										 err: 'Ligne ' + node.line + ': La command "' +
-													 node.command + '" ne doit pas avoir d\'argument' };
-					}
+          // Check an argument is present if necessary
+          if (matching.haveArgs && !node.hasOwnProperty('arg')) {
+            return { errno: eErrCode.MISSING_ARGUMENT,
+                     err: 'Ligne ' + node.line + ': La command "' +
+                           node.command + '" doit avoir un argument' };
+          }
+          // Check there is no argument if none expected
+          if (!matching.haveArgs && node.hasOwnProperty('arg')) {
+            return { errno: eErrCode.USELESS_ARGUMENT,
+                     err: 'Ligne ' + node.line + ': La command "' +
+                           node.command + '" ne doit pas avoir d\'argument' };
+          }
           return { errno: 0, err: '' };
         },
         NOOP: function(node) { /* quietly ignored */
