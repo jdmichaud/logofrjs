@@ -9,6 +9,8 @@ define(function() {
   var eErrCode = {
     SYNTAX_ERROR: 1,
     UNKNOWN_INSTRUCTION: 2,
+		MISSING_ARGUMENT: 3,
+		USELESS_ARGUMENT: 4,
     UNKNOWN_ERROR: 255
   };
 
@@ -51,7 +53,7 @@ define(function() {
       var check = visitor.build({
         PROGRAM: function(node) {
           for (var i = node.instructions.length - 1; i >= 0; i--) {
-            var ret = check(node.instructions[i]); 
+            var ret = check(node.instructions[i]);
             // If an error code is returned, stop immediatly and returns the
             // error
             if (ret.errno !== 0) {
@@ -61,15 +63,28 @@ define(function() {
           return { errno: 0, err: '' };
         },
         INSTRUCTION: function(node) {
+					// Check for unknown instruction
           var matching = instruction.getMatchingInstruction(node.command);
           if (matching === undefined) {
-            return { errno: eErrCode.UNKNOWN_INSTRUCTION, 
-                     err: 'Ligne ' + node.line + ': L\'instruction ' + 
-                                node.command + ' est inconnue' };
+            return { errno: eErrCode.UNKNOWN_INSTRUCTION,
+                     err: 'Ligne ' + node.line + ': L\'instruction "' +
+                                node.command + '" est inconnue' };
           }
+					// Check an argument is present if necessary
+					if (matching.haveArgs && !node.hasOwnProperty('arg')) {
+						return { errno: eErrCode.MISSING_ARGUMENT,
+										 err: 'Ligne ' + node.line + ': La command "' +
+													 node.command + '" doit avoir un argument' };
+					}
+					// Check there is no argument if none expected
+					if (!matching.haveArgs && node.hasOwnProperty('arg')) {
+						return { errno: eErrCode.USELESS_ARGUMENT,
+										 err: 'Ligne ' + node.line + ': La command "' +
+													 node.command + '" ne doit pas avoir d\'argument' };
+					}
           return { errno: 0, err: '' };
         },
-        NOOP: function(node) { /* quietly ignored */ 
+        NOOP: function(node) { /* quietly ignored */
           return { errno: 0, err: '' };
         }
       });
