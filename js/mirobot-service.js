@@ -12,44 +12,40 @@ define(function () {
   var currentCallbackId = 0;
   // Hold our WebSocket object. Will be initialized on call to connect.
   var _ws;
-  // Create a default defer notified when a message is not a answer to a request
-  var defaultDefer = $q.defer();
-
-  _ws.onopen = function(){
-      console.log('Socket has been opened!');
-  };
-
-  _ws.onmessage = function(message) {
+  // Upon reception of a message through the WebSocker interface, parse the json
+  // and call the listener
+  function _onmessage(message) {
     listener(JSON.parse(message.data));
   };
-
+  // Get the data on message reception and notify the appropriate Promise
+  function listener(data) {
+    var messageObj = data;
+    // If an object exists with callback_id in our callbacks object, resolve it
+    if(callbacks.hasOwnProperty(messageObj.callback_id)) {
+      callback = callbacks[messageObj.callback_id];
+      delete callbacks[messageObj.callbackID];
+      callback.resolve(messageObj);
+    } else {
+      // Else call the default callback
+      defaultDefer.notify(messageObj);
+    }
+  };
   // Prepare a callback object associated to the request containing a callbackId
   // and a promise object.
   function sendRequest(request) {
-    var defer = $q.defer();
-    var callbackId = getCallbackId();
-    callbacks[callbackId] = {
-      time: new Date(),
-      cb:defer
-    };
-    //request.callback_id = callbackId;
-    console.log('Sending request', request);
-    ws.send(JSON.stringify(request));
-    return defer.promise;
-  }
-
-  function listener(data) {
-    var messageObj = data;
-    //console.log("Received data from websocket: ", messageObj);
-    // If an object exists with callback_id in our callbacks object, resolve it
-    if(callbacks.hasOwnProperty(messageObj.callback_id)) {
-      console.log(callbacks[messageObj.callback_id]);
-      $rootScope.$apply(callbacks[messageObj.callback_id].cb.resolve(messageObj));
-      delete callbacks[messageObj.callbackID];
-    } else {
-      defaultDefer.notify(messageObj);
-    }
-  }
+    var promise = new Promise(function (resolve, reject) {
+      var callbackId = getCallbackId();
+      callbacks[callbackId] = {
+        time: new Date(),
+        resolve: resolve,
+        reject: reject
+      };
+      //request.callback_id = callbackId;
+      console.log('Sending request', request);
+      _ws.send(JSON.stringify(request));
+    });
+    return promise;
+  };
   // This creates a new callback ID for a request
   function getCallbackId() {
     currentCallbackId += 1;
@@ -58,14 +54,13 @@ define(function () {
     }
     return currentCallbackId;
   }
-
-  // Get the promise for uncalled for events
-  Service.messageHandler = function () {
-    return defaultDefer.promise;
+  // Default message handler for message without registered callback
+  Service.messageHandler = function (messageObj) {
+    console.log("WARNING! message received without a valid callback ID: ", 
+                messageObj);
   }
-
   // Push a regular button
-  Service.pushButton = function(button) {
+  Service.send = function(msg) {
     var request = { command: "pushButton", args: { buttonName: button } };
     // Storing in a variable for clarity on what sendRequest returns
     var promise = sendRequest(request);
@@ -73,9 +68,18 @@ define(function () {
   }
 
   // Connect to the mirobot
-  Service.connect = function(ip, port, suffix) {
+  Service.connect = function(ip, port, onopen, onclose, onerror, suffix) {
     if (suffix === undefined) { suffix = ''; }
+    // Clear the callback queue
+    callbacks = {};
+    currentCallbackId = 0;
+    // Connect to the server
     _ws = new WebSocket('ws://' + ws + ':' + port + '/' + suffix);
+    // Initialize the callback handlers
+    _ws.onopen = onopen;
+    _ws.onopen = onclose;
+    _ws.onerror = onerror;
+    _ws.onmessage = _onmessage;
   }
 
   return Service;
