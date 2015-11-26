@@ -4,6 +4,10 @@
 
 define(function () {
   'use strict';
+  // First, the error codes
+  eErrCode = {
+    CONN_CLOSED = 1
+  }
   // We return this object to anything injecting our service
   var Service = {};
   // Keep all pending requests here until they get responses
@@ -33,7 +37,7 @@ define(function () {
   // Prepare a callback object associated to the request containing a callbackId
   // and a promise object.
   function sendRequest(request) {
-    var promise = new Promise(function (resolve, reject) {
+    return new Promise(function (resolve, reject) {
       var callbackId = getCallbackId();
       callbacks[callbackId] = {
         time: new Date(),
@@ -42,9 +46,13 @@ define(function () {
       };
       //request.callback_id = callbackId;
       console.log('Sending request', request);
-      _ws.send(JSON.stringify(request));
+      if (_ws.readyState == _ws.OPEN) {
+        _ws.send(JSON.stringify(request));
+      } else {
+        reject({ errno: eErrCode.CONN_CLOSED, 
+                 err: 'Websocket connection is closed' });
+      }
     });
-    return promise;
   };
   // This creates a new callback ID for a request
   function getCallbackId() {
