@@ -25,6 +25,9 @@
     "define": true,
     "describe": true,
     "it": true,
-    "expect": true
+    "expect": true,
+    "jasmine": true,
+    "beforeEach": true,
+    "spyOn": true
   }
 }
