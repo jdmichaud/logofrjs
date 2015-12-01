@@ -42,29 +42,29 @@ module.exports = function(grunt) {
         }
       }
     },
-    browserify: {
-      dist: {
-        files: {
-          'dist/js/index.js': [
-            'js/**/*.js',
-            '!js/main.js'
-          ]
-        }
-      },
-      dev: {
-        files: {
-          'dist/js/index.js': [
-            'js/**/*.js',
-            '!js/main.js'
-          ]
-        },
-        option: {
-          browserifyOptions: {
-            debug: true
-          }
-        }
-      }
-    },
+//    browserify: {
+//      dist: {
+//        files: {
+//          'dist/js/index.js': [
+//            'js/**/*.js',
+//            '!js/main.js'
+//          ]
+//        }
+//      },
+//      dev: {
+//        files: {
+//          'dist/js/index.js': [
+//            'js/**/*.js',
+//            '!js/main.js'
+//          ]
+//        },
+//        option: {
+//          browserifyOptions: {
+//            debug: true
+//          }
+//        }
+//      }
+//    },
     requirejs: {
       dist: {
         options: {
@@ -103,5 +103,5 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', ['clean', 'jshint']);
   //grunt.registerTask('default', ['jshint', 'requirejs']);
-  grunt.registerTask('test', ['clean', 'jshint', 'browserify:dev', 'karma']);
+  grunt.registerTask('test', ['clean', 'jshint', 'karma']);
 };
