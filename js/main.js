@@ -15,17 +15,25 @@ requirejs.config({
 });
 
 // Main function
-requirejs(['fs', 'commander', '../package.json', 'parser'],
-          function (fs, program, pjson, parser) {
+requirejs(['fs', 'commander', '../package.json', 'parser', 'pegjs',
+           'pegjs/lib/compiler/visitor'],
+          function (fs, program, pjson, parser, PEG, visitor) {
   'use strict';
+  // The french logo grammar file
+  var grammarFile = 'grammar/logo.peg';
+
   // Help usage function
   var usage = function usage() {
     console.log('usage: node logofrjs [--debug,-d] <logofile>');
   };
+
   // Take a filename, load the file and execute the logo program
-  var runFile = function(filename, fs, parser, debug) {
+  var runFile = function(filename, fs, parser, PEG, visitor, debug) {
     var content;
+    var logoGrammar;
     try {
+      // Load the grammar
+      logoGrammar = fs.readFileSync(grammarFile, 'utf8').toString();
       // Read the file
       content = fs.readFileSync(filename, 'utf8').toString();
     } catch (err) {
@@ -39,14 +47,14 @@ requirejs(['fs', 'commander', '../package.json', 'parser'],
     }
     console.log('parse', filename);
     // Parse the loaded file
-    var parseRet = parser.parse(fs, content, debug);
+    var parseRet = parser.parse(fs, PEG, visitor, content, logoGrammar, debug);
     if (parseRet.err) {
       // Error while walking the AST
       console.log(parseRet.err);
       return parseRet.errno;
     } else {
       // TODO: do something with this AST
-      var syntaxCheckRet = parser.syntaxCheck(parseRet.ast);
+      var syntaxCheckRet = parser.syntaxCheck(visitor, parseRet.ast);
       if (syntaxCheckRet.errCode !== 0) {
         console.log(syntaxCheckRet.err);
         return syntaxCheckRet.errno;
@@ -54,6 +62,7 @@ requirejs(['fs', 'commander', '../package.json', 'parser'],
       return 0;
     }
   };
+
   // Describe the program options
   program
     .version(pjson.version)
@@ -66,7 +75,7 @@ requirejs(['fs', 'commander', '../package.json', 'parser'],
   } else {
     // Read files passed as parameter and interpret them
     for (let filename of program.args) {
-      runFile(filename, fs, parser, program.debug);
+      runFile(filename, fs, parser, PEG, visitor, program.debug);
     }
   }
 });

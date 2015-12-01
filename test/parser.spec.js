@@ -13,7 +13,7 @@ define(['../js/parser.js'], function (parser) {
         { filename: 'ok-simple2.logo',            expectedOutcome: 0 },
         { filename: 'ok-ultra-simple.logo',       expectedOutcome: 0 }
       ];
-      testFile().forEach(function (testFile) {
+      testFile.forEach(function (testFile) {
         expect(parser.parse(testFile.filename)).toBe(testFile.expectedOutcome);
       });
     });

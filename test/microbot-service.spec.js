@@ -46,7 +46,7 @@ define(['../js/mirobot-service.js'], function (mirobotService) {
       // Add spy to callbacks
       onOpenSpy = spyOn(mockCallBack, 'onopen');
       onCloseSpy = spyOn(mockCallBack, 'onclose');
-      onErrorSpy = spyOn(mockCallBack, 'onError');
+      onErrorSpy = spyOn(mockCallBack, 'onerror');
     });
 
     it('on call to connect, mirobotService shall connect to a web socket server specified by a address and a port', function () {
@@ -54,7 +54,7 @@ define(['../js/mirobot-service.js'], function (mirobotService) {
       mirobotService.connect(ip, port, mockCallBack.onopen,
                              mockCallBack.onclose, mockCallBack.onerror);
       // Check the WebSocket constructor was properly called
-      expect(webSocketConstructorSpy).toHaveBeenCallWith('ws://' + ip + ':' + port + '/');
+      expect(webSocketConstructorSpy).toHaveBeenCalledWith('ws://' + ip + ':' + port + '/');
     });
 
     it('on call to connect, mirobotService shall hook the provided callbacks to the WebSocket object', function () {

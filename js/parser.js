@@ -1,10 +1,9 @@
-define(function() {
+define(['instruction'], function(instruction) {
+//define(function() {
   'use strict';
 
-  var PEG = require('pegjs');
-  var visitor = require('pegjs/lib/compiler/visitor');
-  var instruction = require('./instruction');
-  var grammarFile = 'grammar/logo.peg';
+//  var PEG = require('pegjs');
+//  var visitor = require('pegjs/lib/compiler/visitor');
 
   var eErrCode = {
     SYNTAX_ERROR: 1,
@@ -19,11 +18,9 @@ define(function() {
     // content - string containing the text to parse
     // debug - boolean indicating if pegjs shall output debugging information
     // returns the AST
-    parse: function(fs, content, debug) {
+    parse: function(fs, PEG, visitor, content, logoGrammar, debug) {
       // No debug by default
       if (debug === undefined) { debug = false; }
-      // Load the grammar
-      var logoGrammar = fs.readFileSync(grammarFile, 'utf8').toString();
       // Build parser from grammar
       var parser = PEG.buildParser(logoGrammar, { trace: debug } );
       var ast;
@@ -49,7 +46,7 @@ define(function() {
     // - Arguments are properly formated
     // ast - the ast as return by pegjs parse function
     // returns the errCode and an error string
-    syntaxCheck: function(ast) {
+    syntaxCheck: function(visitor, ast) {
       // Build a custom visitor
       var check = visitor.build({
         PROGRAM: function(node) {

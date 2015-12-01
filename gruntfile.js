@@ -42,6 +42,29 @@ module.exports = function(grunt) {
         }
       }
     },
+    browserify: {
+      dist: {
+        files: {
+          'dist/js/index.js': [
+            'js/**/*.js',
+            '!js/main.js'
+          ]
+        }
+      },
+      dev: {
+        files: {
+          'dist/js/index.js': [
+            'js/**/*.js',
+            '!js/main.js'
+          ]
+        },
+        option: {
+          browserifyOptions: {
+            debug: true
+          }
+        }
+      }
+    },
     requirejs: {
       dist: {
         options: {
@@ -66,7 +89,6 @@ module.exports = function(grunt) {
     },
     clean: { dist: [
       'dist',
-      'js/logo.js'
     ]}
   });
 
@@ -77,7 +99,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-karma');
+  grunt.loadNpmTasks('grunt-browserify');
 
   grunt.registerTask('default', ['clean', 'jshint']);
   //grunt.registerTask('default', ['jshint', 'requirejs']);
+  grunt.registerTask('test', ['clean', 'jshint', 'browserify:dev', 'karma']);
 };
