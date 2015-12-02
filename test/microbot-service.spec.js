@@ -13,7 +13,8 @@ define(['../js/mirobot-service.js'], function (mirobotService) {
     var port = 123;
     var mockWebSocket = {
       addr: '',
-      send: function(msg) {
+      send: function(msg) {},
+      callCBs: function() {
         // Call the callback provided
         this.onopen();
         this.onclose();
@@ -22,7 +23,7 @@ define(['../js/mirobot-service.js'], function (mirobotService) {
       // Generate a message from the WebSocket server with the provided
       // callback id
       sendResponse: function(id) {
-        this.onmessage({id: id});
+        this.onmessage({ data: JSON.stringify({ id: id }) });
       }
     };
     var mockCallBack = {
@@ -61,22 +62,24 @@ define(['../js/mirobot-service.js'], function (mirobotService) {
       // Connect to the WebSocket mock server
       mirobotService.connect(ip, port, mockCallBack.onopen,
                              mockCallBack.onclose, mockCallBack.onerror);
-      // Simulate a call to send
-      mockWebSocket.send({ toto: 'titi' });
+      // Simulate a call to service callbacks
+      mockWebSocket.callCBs();
       // Ckeck the callbacks have been called
       expect(onOpenSpy).toHaveBeenCalled();
       expect(onCloseSpy).toHaveBeenCalled();
       expect(onErrorSpy).toHaveBeenCalled();
     });
 
-    it('on call to send, mirobotService shall be able to send a message', function () {
+    it('on call to send, mirobotService shall send a message to the WebSocket server', function () {
       // Connect to the WebSocket mock server
       mirobotService.connect(ip, port, mockCallBack.onopen,
                              mockCallBack.onclose, mockCallBack.onerror);
       // Call send on the service
       mirobotService.send({ toto: 'titi' });
       // Check send has been called to the WebSocket object
-      expect(onWebSocketSendSpy).toHaveBeenCalledWith({ id: 1, toto: 'titi' });
+      expect(onWebSocketSendSpy).toHaveBeenCalled();
+      // Check the argument
+      expect(JSON.parse(mockWebSocket.send.calls.allArgs()[0])).toEqual({ id: 1, toto: 'titi' });
     });
 
     it('on successive call to send, mirobotService shall forward the request to the WebSocket server only when the onmessage of the previous request has been received from the server', function () {
@@ -86,15 +89,19 @@ define(['../js/mirobot-service.js'], function (mirobotService) {
       // Call send on the service
       mirobotService.send({ toto: 'titi' });
       // Check send has been called to the WebSocket object
-      expect(onWebSocketSendSpy).toHaveBeenCalledWith({ id: 1, toto: 'titi' });
+      expect(onWebSocketSendSpy).toHaveBeenCalled();
+      // Check the argument
+      expect(JSON.parse(mockWebSocket.send.calls.allArgs()[0])).toEqual({ id: 1, toto: 'titi' });
       // Call send a second time before the call back from the WebSocket server
       mirobotService.send({ toto: 'tutu' });
       // Check send has NOT been called to the WebSocket object
-      expect(onWebSocketSendSpy).not.toHaveBeenCalled();
+      expect(mockWebSocket.send.calls.count()).toEqual(1);
       // Simulate the callback from the WebSocket server
       mockWebSocket.sendResponse(1);
-      // Check send is called now
-      expect(onWebSocketSendSpy).toHaveBeenCalledWith({ id: 2, toto: 'tutu' });
+      // Check send has been called twice now
+      expect(mockWebSocket.send.calls.count()).toEqual(2);
+      // Check the argument of the second call
+      expect(JSON.parse(mockWebSocket.send.calls.allArgs()[1])).toEqual({ id: 2, toto: 'tutu' });
     });
   });
 });
