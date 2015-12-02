@@ -17,8 +17,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-//      { pattern: 'node_modules/pegjs/lib/utils/arrays.js', included: true },
-//      { pattern: 'node_modules/pegjs/lib/**/*.js', included: true  },
+      'node_modules/babel-polyfill/dist/polyfill.js',
       { pattern: 'bower_components/pegjs/peg-0.9.0.js', included: true },
       { pattern: './test/**/*.spec.js', included: false },
       { pattern: './js/**/*.js', included: false},
