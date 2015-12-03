@@ -6,6 +6,7 @@
 // TODO: explain the mirobot part
 
 var requirejs = require('requirejs');
+var util = require('util');
 
 requirejs.config({
   //Pass the top-level main.js require
@@ -53,12 +54,17 @@ requirejs(['fs', 'commander', '../package.json', 'parser', 'pegjs',
       console.log(parseRet.err);
       return parseRet.errno;
     } else {
-      // TODO: do something with this AST
+      // Check the syntax of the parsed AST
       var syntaxCheckRet = parser.syntaxCheck(visitor, parseRet.ast);
-      if (syntaxCheckRet.errCode !== 0) {
-        console.log(syntaxCheckRet.err);
+      if (syntaxCheckRet.errno !== 0) {
+        console.log('Error(' , syntaxCheckRet.errno, '): ', syntaxCheckRet.err);
         return syntaxCheckRet.errno;
       }
+      // Normalize the AST
+      parseRet.ast = parser.normalize(visitor, parseRet.ast);
+      console.log(util.inspect(parseRet, {showHidden: false, depth: null}));
+      // Interpret the AST and issue mirobot command
+      // TODO: interpreter.interpret(parseRes.ast);
       return 0;
     }
   };

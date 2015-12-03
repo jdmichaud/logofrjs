@@ -1,7 +1,7 @@
 define(['../js/parser.js'], function (parser) {
   'use strict';
 
-  describe('Parser test', function () {
+  describe('Parser', function () {
     it('shall accept only properly formed logo program', function () {
       var testFile = [
         { filename: 'ko.logo',                    expectedOutcome: 1 },
@@ -21,7 +21,7 @@ define(['../js/parser.js'], function (parser) {
 
   // ****** Syntax Checker tests ****** //
 
-  describe('Syntax checker test', function () {
+  describe('Syntax checker', function () {
     it('shall return 2 if an instruction is unknown', function () {
       expect(parser.syntaxCheck({
         type: 'PROGRAM',
@@ -72,7 +72,7 @@ define(['../js/parser.js'], function (parser) {
   });
 
   // ****** Normalizer tests ****** //
-  describe('Normalizer test', function () {
+  describe('Normalizer', function () {
     it('shall return the AST with all the command name expanded and in upper case', function() {
       expect(parser.normalize( {
         type: 'PROGRAM',

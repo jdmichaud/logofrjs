@@ -93,6 +93,7 @@ define(['instruction'], function(instruction) {
 
     // Normalize the command name to simplify the interpreter. All commands are
     // transformed to their capitalized full named form.
+    // NOOP commands are removed.
     // visit - the pegjs visit module
     // ast - the ast as return by pegjs parse function
     // returns an errcode and the normalized AST
@@ -103,7 +104,10 @@ define(['instruction'], function(instruction) {
           var normedInstructions = [];
           for (var i = node.instructions.length - 1; i >= 0; i--) {
             var instruction = normalizeVisit(node.instructions[i]);
-            normedInstructions.push(instruction);
+            // filter out NOOP node
+            if (instruction.type !== 'NOOP') {
+              normedInstructions.push(instruction);
+            }
           }
           node.instructions = normedInstructions;
           return node;
