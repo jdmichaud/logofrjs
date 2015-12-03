@@ -2,11 +2,11 @@ define(function() {
   'use strict';
 
   var instructionDescr = [
-    { labels : ['AVANCE', 'AV'],        haveArgs : true },
-    { labels : ['RECULE', 'RE'],        haveArgs : true },
+    { labels : ['AVANCE',       'AV'],  haveArgs : true },
+    { labels : ['RECULE',       'RE'],  haveArgs : true },
     { labels : ['TOURNEDROITE', 'TD'],  haveArgs : true },
     { labels : ['TOURNEGAUCHE', 'TG'],  haveArgs : true },
-    { labels : ['LEVECRAYON', 'LC'],    haveArgs : false },
+    { labels : ['LEVECRAYON',   'LC'],  haveArgs : false },
     { labels : ['BAISSECRAYON', 'BC'],  haveArgs : false }
   ];
 

@@ -44,6 +44,7 @@ define(['instruction'], function(instruction) {
     // Analyze the AST to ensure the syntax is correct:
     // - Commands are known
     // - Arguments are properly formated
+    // visit - the pegjs visit module
     // ast - the ast as return by pegjs parse function
     // returns the errCode and an error string
     syntaxCheck: function(visitor, ast) {
@@ -88,6 +89,38 @@ define(['instruction'], function(instruction) {
       });
       // Call the visitor with the provided ast
       return check(ast);
+    },
+
+    // Normalize the command name to simplify the interpreter. All commands are
+    // transformed to their capitalized full named form.
+    // visit - the pegjs visit module
+    // ast - the ast as return by pegjs parse function
+    // returns an errcode and the normalized AST
+    normalize: function (visitor, ast) {
+      // Build a custom visitor
+      var normalizeVisit = visitor.build({
+        PROGRAM: function(node) {
+          var normedInstructions = [];
+          for (var i = node.instructions.length - 1; i >= 0; i--) {
+            var instruction = normalizeVisit(node.instructions[i]);
+            normedInstructions.push(instruction);
+          }
+          node.instructions = normedInstructions;
+          return node;
+        },
+        INSTRUCTION: function(node) {
+          // Check for unknown instruction
+          var matching = instruction.getMatchingInstruction(node.command);
+          // Use the capitalized fully named command label (the first one)
+          node.command = matching.labels[0];
+          return node;
+        },
+        NOOP: function(node) { /* quietly ignored */
+          return node;
+        }
+      });
+      // Call the visitor with the provided ast
+      return normalizeVisit(ast);
     }
   };
 });

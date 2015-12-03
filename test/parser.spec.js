@@ -19,6 +19,8 @@ define(['../js/parser.js'], function (parser) {
     });
   });
 
+  // ****** Syntax Checker tests ****** //
+
   describe('Syntax checker test', function () {
     it('shall return 2 if an instruction is unknown', function () {
       expect(parser.syntaxCheck({
@@ -60,12 +62,38 @@ define(['../js/parser.js'], function (parser) {
           { command: 'BC', line: 1 },
           { command: 'AVANCE', arg: 10, line: 2 },
           { command: 'TD', arg: 90, line: 3 },
-          { command: 'AV', arg: 10, line: 4 },
-          { command: 'LEVECRAYON', line: 5 }
+          { command: 'av', arg: 10, line: 4 },
+          { command: 'levecrayon', line: 5 }
         ]
       })).toEqual(jasmine.objectContaining({
         errno: 0
       }));
     });
+  });
+
+  // ****** Normalizer tests ****** //
+  describe('Normalizer test', function () {
+    it('shall return the AST with all the command name expanded and in upper case', function() {
+      expect(parser.normalize( {
+        type: 'PROGRAM',
+        instructions: [
+          { command: 'BC', line: 1 },
+          { command: 'AVANCE', arg: 10, line: 2 },
+          { command: 'TD', arg: 90, line: 3 },
+          { command: 'av', arg: 10, line: 4 },
+          { command: 'levecrayon', line: 5 }
+        ]
+      })).toEqual({
+        type: 'PROGRAM',
+        instructions: [
+          { command: 'BAISSECRAYON', line: 1 },
+          { command: 'AVANCE', arg: 10, line: 2 },
+          { command: 'TOURNEDROITE', arg: 90, line: 3 },
+          { command: 'AVANCE', arg: 10, line: 4 },
+          { command: 'LEVECRAYON', line: 5 }
+        ]
+      });
+    });
+
   });
 });
