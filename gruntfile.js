@@ -80,7 +80,7 @@ module.exports = function(grunt) {
     },
     karma: {
       unit: {
-        configFile: 'test/karma.conf.js'
+        configFile: 'test/spec/karma.conf.js'
       }
     },
     watch: {
