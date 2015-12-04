@@ -28,7 +28,7 @@ define(function () {
   // Upon reception of a message through the WebSocker interface, parse the json
   // and call the listener
   function _onmessage(message) {
-    console.log(message);
+    //console.log(message);
     listener(JSON.parse(message.data));
   }
 
@@ -53,7 +53,7 @@ define(function () {
   // Prepare a callback object associated to the request containing a callbackId
   // and a promise object.
   function sendRequest(request) {
-    console.log('Sending request', request);
+    //console.log('Sending request', request);
     if (_ws.readyState === _ws.OPEN) {
       _mirobotState = true;
       _ws.send(JSON.stringify(request));

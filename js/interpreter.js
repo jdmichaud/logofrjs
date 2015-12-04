@@ -17,11 +17,6 @@ define(function() {
       PROGRAM: function (node, visit) {
         for (var i = node.instructions.length - 1; i >= 0; i--) {
           var ret = visit(node.instructions[i]);
-          // If an error code is returned, stop immediatly and returns the
-          // error
-          if (ret.errno !== 0) {
-            return ret;
-          }
         }
         return { errno: 0, err: '' };
       },

@@ -22,6 +22,7 @@
     "_": false,
     "$": false,
     "Hammer": false,
+    "PEG": true,
     "define": true,
     "describe": true,
     "it": true,

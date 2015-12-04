@@ -51,7 +51,7 @@ define(['instruction'], function(instruction) {
       // Build a custom visitor
       var check = visitor.build({
         PROGRAM: function(node) {
-          for (var i = node.instructions.length - 1; i >= 0; i--) {
+          for (var i = 0; i < node.instructions.length; i++) {
             var ret = check(node.instructions[i]);
             // If an error code is returned, stop immediatly and returns the
             // error
@@ -102,7 +102,7 @@ define(['instruction'], function(instruction) {
       var normalizeVisit = visitor.build({
         PROGRAM: function(node) {
           var normedInstructions = [];
-          for (var i = node.instructions.length - 1; i >= 0; i--) {
+          for (var i = 0; i < node.instructions.length; i++) {
             var instruction = normalizeVisit(node.instructions[i]);
             // filter out NOOP node
             if (instruction.type !== 'NOOP') {

@@ -8,7 +8,7 @@ module.exports = function(grunt) {
         src: [
           'gruntfile.js',
           'js/**/*.js',
-          'test/**/*.js'
+          'spec/**/*.js'
         ]
       },
       options: {
@@ -79,8 +79,8 @@ module.exports = function(grunt) {
       }
     },
     karma: {
-      unit: {
-        configFile: 'test/karma.conf.js'
+      browser: {
+        configFile: 'spec/browser/karma.conf.js'
       }
     },
     watch: {

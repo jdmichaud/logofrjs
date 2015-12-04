@@ -7,7 +7,7 @@ module.exports = function(config) {
   config.set({
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
-    basePath: '../',
+    basePath: '../../',
 
 
     // frameworks to use
@@ -19,9 +19,9 @@ module.exports = function(config) {
     files: [
       'node_modules/babel-polyfill/dist/polyfill.js',
       { pattern: 'bower_components/pegjs/peg-0.9.0.js', included: true },
-      { pattern: './test/**/*.spec.js', included: false },
+      { pattern: './spec/browser/**/*.spec.js', included: false },
       { pattern: './js/**/*.js', included: false},
-      './test/test-main.js',
+      './spec/browser/test-main.js',
     ],
 
     // list of files to exclude

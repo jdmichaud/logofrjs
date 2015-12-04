@@ -1,4 +1,4 @@
-define(['../js/mirobot-service.js'], function (mirobotService) {
+define(['../../js/mirobot-service.js'], function (mirobotService) {
   'use strict';
 
   // connect
