@@ -24,6 +24,9 @@ define(function () {
   var _mirobotState = false;
   // Message queue to buffer messages to be sent to the mirobot
   var _msgQueue = [];
+  // Position this flag to close the websocket connection upon last message
+  // answered
+  var _closeRequestPending = false;
 
   // Upon reception of a message through the WebSocker interface, parse the json
   // and call the listener
@@ -47,6 +50,10 @@ define(function () {
     } else {
       // Else call the default callback
       Service.messageHandler(message);
+    }
+    // If no more message to be processed and close requested
+    if (_msgQueue.length == 0 && _closeRequestPending) {
+      _ws.close();
     }
   }
 
@@ -82,6 +89,10 @@ define(function () {
       // send the older message
       sendRequest(_msgQueue.shift());
     }
+  }
+
+  function forceClose() {
+    _ws.close();
   }
 
   // Default message handler for message without registered callback
@@ -128,6 +139,14 @@ define(function () {
     _ws.onerror = onerror;
     _ws.onmessage = _onmessage;
   };
+
+  Service.close = function (waitForServer) {
+    if (waitForServer) { // Wait for all the command to be processed
+      _closeRequestPending = true;
+    }
+    else
+      forceClose();
+  }
 
   return Service;
 

@@ -97,6 +97,9 @@ requirejs(['fs', 'ws', 'commander', '../package.json', 'parser',
     mirobotService.connect(mirobotIP, 8899, function () {
                              // On connection, execute the files
                              onWebSocketConnection(program);
+                             // Close the wesocket connections once all requests
+                             // have been processed by mirobot
+                             mirobotService.close(true);
                            }, function () {}, function (err) {
                              console.log('Error: ', err);
                            },
