@@ -11,16 +11,16 @@ define(function () {
 
   var webSocketAdapter = {
     avance: function (arg) {
-      _mirobotService.send({ cmd: 'forward', distance: arg });
+      _mirobotService.send({ cmd: 'forward', arg: arg.toString() });
     },
     recule: function (arg) {
-      _mirobotService.send({ cmd: 'back', distance: arg });
+      _mirobotService.send({ cmd: 'back', arg: arg.toString() });
     },
     tournedroite: function (arg) {
-      _mirobotService.send({ cmd: 'right', distance: arg });
+      _mirobotService.send({ cmd: 'right', arg: arg.toString() });
     },
     tournegauche: function (arg) {
-      _mirobotService.send({ cmd: 'left', distance: arg });
+      _mirobotService.send({ cmd: 'left', arg: arg.toString() });
     },
     levecrayon: function () {
       _mirobotService.send({ cmd: 'penup' });

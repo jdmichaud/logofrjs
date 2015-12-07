@@ -11,7 +11,7 @@ define(function () {
   // We return this object to anything injecting our service
   var Service = {};
   // Keep all pending requests here until they get responses
-  var callbacks = {};
+  var _callbacks = {};
   // Create a unique callback ID to map requests to responses
   var currentCallbackId = 0;
   // Hold our WebSocket object. Will be initialized on call to connect.
@@ -37,23 +37,28 @@ define(function () {
 
   // Get the data on message reception and notify the appropriate Promise
   function listener(message) {
+    console.log("--> ", message);
     // Mirobot just answered, to is not busy anymore
     _mirobotState = false;
-    // If an object exists with callback_id in our callbacks object, resolve it
-    if (callbacks.hasOwnProperty(message.id)) {
-      var callback = callbacks[message.id];
-      delete callbacks[message.id];
-      // Process the next message as soon as possible
-      processMessage();
-      // Call back the client code
-      callback.resolve();
+    // If an object exists with callback_id in our _callbacks object, resolve it
+    if (_callbacks.hasOwnProperty(message.id.toString())) {
+      if (message.status === 'complete') {
+        var callback = _callbacks[message.id.toString()];
+        delete _callbacks[message.id.toString()];
+        // Process the next message as soon as possible
+        processMessage();
+        // Call back the client code
+        callback.resolve();
+      } else {
+        // Just ignore accepted status
+      }
     } else {
       // Else call the default callback
       Service.messageHandler(message);
     }
     // If no more message to be processed and close requested
-    if (_msgQueue.length == 0 && _closeRequestPending) {
-      _ws.close();
+    if (_msgQueue.length === 0 && _closeRequestPending) {
+      forceClose();
     }
   }
 
@@ -63,10 +68,11 @@ define(function () {
     //console.log('Sending request', request);
     if (_ws.readyState === _ws.OPEN) {
       _mirobotState = true;
+      console.log("<-- ", request);
       _ws.send(JSON.stringify(request));
     } else {
-      var callback = callbacks[request.id];
-      delete callbacks[request.id];
+      var callback = _callbacks[request.id.toString()];
+      delete _callbacks[request.id.toString()];
       // Signal the client code that the promise has failed
       callback.reject({ errno: eErrCode.CONN_CLOSED,
                         err: 'Websocket connection is closed' });
@@ -91,14 +97,26 @@ define(function () {
     }
   }
 
-  function forceClose() {
-    _ws.close();
+  function forceClose () {
+    _ws.terminate();
+  }
+
+  function reinit () {
+    // Clear the mirobot state
+    _mirobotState = false;
+    // Clear the message queue
+    _msgQueue = [];
+    // Clear the callback map
+    _callbacks = {};
+    currentCallbackId = 0;
   }
 
   // Default message handler for message without registered callback
   Service.messageHandler = function (messageObj) {
     console.log('WARNING! message received without a valid callback ID: ',
                 messageObj);
+    console.log("Pensing request:");
+    console.log(_callbacks);
   };
 
   // Send a request to mirobot
@@ -106,7 +124,7 @@ define(function () {
     // Storing in a variable for clarity on what sendRequest returns
     var promise = new Promise(function (resolve, error) {
       var callbackId = getCallbackId();
-      callbacks[callbackId] = {
+      _callbacks[callbackId] = {
         time: new Date(),
         resolve: resolve,
         reject: error
@@ -124,13 +142,8 @@ define(function () {
   // Connect to the mirobot
   Service.connect = function(ip, port, onopen, onclose, onerror, suffix) {
     if (suffix === undefined) { suffix = ''; }
-    // Clear the mirobot state
-    _mirobotState = false;
-    // Clear the message queue
-    _msgQueue = [];
-    // Clear the callback map
-    callbacks = {};
-    currentCallbackId = 0;
+    // Reinit the module state
+    reinit();
     // Connect to the server
     _ws = new WebSocket('ws://' + ip + ':' + port + '/' + suffix);
     // Initialize the callback handlers
@@ -144,9 +157,10 @@ define(function () {
     if (waitForServer) { // Wait for all the command to be processed
       _closeRequestPending = true;
     }
-    else
+    else {
       forceClose();
-  }
+    }
+  };
 
   return Service;
 

@@ -1,3 +1,5 @@
+'use strict';
+
 var WebSocketServer = require('ws').Server;
 var wss = new WebSocketServer({ port: 8899 });
 

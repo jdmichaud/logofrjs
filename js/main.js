@@ -100,7 +100,9 @@ requirejs(['fs', 'ws', 'commander', '../package.json', 'parser',
                              // Close the wesocket connections once all requests
                              // have been processed by mirobot
                              mirobotService.close(true);
-                           }, function () {}, function (err) {
+                           }, function () {
+                             console.log("Program terminated.");
+                           }, function (err) {
                              console.log('Error: ', err);
                            },
                            'websocket');
