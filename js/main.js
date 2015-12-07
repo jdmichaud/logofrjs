@@ -16,20 +16,23 @@ requirejs.config({
 });
 
 // Main function
-requirejs(['fs', 'commander', '../package.json', 'parser', 'pegjs',
-           'pegjs/lib/compiler/visitor'],
-          function (fs, program, pjson, parser, PEG, visitor) {
+requirejs(['fs', 'ws', 'commander', '../package.json', 'parser',
+           'mirobot-adapter', 'interpreter', 'pegjs',
+           'pegjs/lib/compiler/visitor', 'mirobot-service'],
+          function (fs, ws, program, pjson, parser, adapterFactory, interpreter,
+                    PEG, visitor, mirobotService) {
   'use strict';
   // The french logo grammar file
   var grammarFile = 'grammar/logo.peg';
 
   // Help usage function
   var usage = function usage() {
-    console.log('usage: node logofrjs [--debug,-d] <logofile>');
+    console.log('usage: node logofrjs [--debug,-d] <logofile> <mirobot\'s IP>');
   };
 
   // Take a filename, load the file and execute the logo program
-  var runFile = function(filename, fs, parser, PEG, visitor, debug) {
+  var runFile = function(filename, fs, parser, adapter, interpreter,
+                         PEG, visitor, debug) {
     var content;
     var logoGrammar;
     try {
@@ -46,7 +49,7 @@ requirejs(['fs', 'commander', '../package.json', 'parser', 'pegjs',
         return console.log(err);
       }
     }
-    console.log('parse', filename);
+    console.log(filename);
     // Parse the loaded file
     var parseRet = parser.parse(fs, PEG, visitor, content, logoGrammar, debug);
     if (parseRet.err) {
@@ -62,10 +65,20 @@ requirejs(['fs', 'commander', '../package.json', 'parser', 'pegjs',
       }
       // Normalize the AST
       parseRet.ast = parser.normalize(visitor, parseRet.ast);
-      console.log(util.inspect(parseRet, {showHidden: false, depth: null}));
+      //console.log(util.inspect(parseRet, {showHidden: false, depth: null}));
       // Interpret the AST and issue mirobot command
-      // TODO: interpreter.interpret(parseRes.ast);
+      interpreter.interpret(visitor, adapter, parseRet.ast);
       return 0;
+    }
+  };
+
+  var onWebSocketConnection = function (program) {
+    // Create an adapter plugged to the websocket service
+    var adapter = adapterFactory.createAdapter(mirobotService);
+    // Read files passed as parameter and interpret them
+    for (let filename of program.args.slice(0, program.args.length - 1)) {
+      runFile(filename, fs, parser, adapter, interpreter,
+              PEG, visitor, program.debug);
     }
   };
 
@@ -74,14 +87,19 @@ requirejs(['fs', 'commander', '../package.json', 'parser', 'pegjs',
     .version(pjson.version)
     .option('-d, --debug', 'Debug grammar')
     .parse(process.argv);
-  // Check number of arguments
-  if (process.argv.length !== 3 &&
-      (process.argv.length !== 4 && program.debug)) {
+  // Check number of argumentsi
+  if (program.args.length < 2) {
     usage();
   } else {
-    // Read files passed as parameter and interpret them
-    for (let filename of program.args) {
-      runFile(filename, fs, parser, PEG, visitor, program.debug);
-    }
+    GLOBAL.WebSocket = ws;
+    // Connect to the mirobot web service
+    var mirobotIP = program.args.slice(program.args.length - 1);
+    mirobotService.connect(mirobotIP, 8899, function () {
+                             // On connection, execute the files
+                             onWebSocketConnection(program);
+                           }, function () {}, function (err) {
+                             console.log('Error: ', err);
+                           },
+                           'websocket');
   }
 });

@@ -15,7 +15,7 @@ define(function() {
   var interpretVisitor = function (mirobotAdapter) {
     return {
       PROGRAM: function (node, visit) {
-        for (var i = node.instructions.length - 1; i >= 0; i--) {
+        for (var i = 0; i < node.instructions.length; i++) {
           var ret = visit(node.instructions[i]);
         }
         return { errno: 0, err: '' };
@@ -50,9 +50,9 @@ define(function() {
     // Interpret the logo file and send commands to the Mirobot
     // ast - the ast parsed and syntax checked
     // miroborConnection - the service used to send command to the mirobot
-    interpret: function (visitor, mirobotService, ast) {
+    interpret: function (visitor, mirobotAdapter, ast) {
       // Build a custom visitor
-      var interpretVisit = visitor.build( interpretVisitor(mirobotService) );
+      var interpretVisit = visitor.build( interpretVisitor(mirobotAdapter) );
       // interpret the ast and issue the command
       interpretVisit(ast, interpretVisit);
     }
