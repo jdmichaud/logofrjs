@@ -49,6 +49,9 @@ define(function () {
         processMessage();
         // Call back the client code
         callback.resolve();
+      } else if (message.status === 'error') {
+        console.log('Error: id: ', message.id, 'message: ', message.msg);
+        callback.reject();
       } else {
         // Just ignore accepted status
       }
