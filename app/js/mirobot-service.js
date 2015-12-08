@@ -42,8 +42,8 @@ define(function () {
     _mirobotState = false;
     // If an object exists with callback_id in our _callbacks object, resolve it
     if (_callbacks.hasOwnProperty(message.id.toString())) {
+      var callback = _callbacks[message.id.toString()];
       if (message.status === 'complete') {
-        var callback = _callbacks[message.id.toString()];
         delete _callbacks[message.id.toString()];
         // Process the next message as soon as possible
         processMessage();
