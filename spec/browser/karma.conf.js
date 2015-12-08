@@ -17,16 +17,17 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      // Babel polyfill is used to enable ES6 features on PhantomJS
       'node_modules/babel-polyfill/dist/polyfill.js',
       { pattern: 'bower_components/pegjs/peg-0.9.0.js', included: true },
-      { pattern: './spec/browser/**/*.spec.js', included: false },
-      { pattern: './js/**/*.js', included: false},
-      './spec/browser/test-main.js',
+      { pattern: 'spec/browser/**/*.spec.js', included: false },
+      { pattern: 'app/js/**/*.js', included: false},
+      'spec/browser/test-main.js',
     ],
 
     // list of files to exclude
     exclude: [
-      './js/main.js'
+      'app/js/main.js'
     ],
 
 

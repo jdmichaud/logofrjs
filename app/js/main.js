@@ -16,7 +16,7 @@ requirejs.config({
 });
 
 // Main function
-requirejs(['fs', 'ws', 'commander', '../package.json', 'parser',
+requirejs(['fs', 'ws', 'commander', '../../package.json', 'parser',
            'mirobot-adapter', 'interpreter', 'pegjs',
            'pegjs/lib/compiler/visitor', 'mirobot-service'],
           function (fs, ws, program, pjson, parser, adapterFactory, interpreter,
@@ -101,7 +101,7 @@ requirejs(['fs', 'ws', 'commander', '../package.json', 'parser',
                              // have been processed by mirobot
                              mirobotService.close(true);
                            }, function () {
-                             console.log("Program terminated.");
+                             console.log('Program terminated.');
                            }, function (err) {
                              console.log('Error: ', err);
                            },
