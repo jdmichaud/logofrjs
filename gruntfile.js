@@ -7,7 +7,7 @@ module.exports = function(grunt) {
       file: {
         src: [
           'gruntfile.js',
-          'js/**/*.js',
+          'app/js/**/*.js',
           'spec/**/*.js'
         ]
       },
@@ -17,10 +17,16 @@ module.exports = function(grunt) {
         jshintrc: '.jshintrc'
       }
     },
+    wiredep : {
+      app: {
+        src: ['app/index.html'],
+        dest: 'dist'
+      }
+    },
     concat: {
       dist: {
         // the files to concatenate
-        src: ['js/**/*.js'],
+        src: ['app/js/**/*.js'],
         // the location of the resulting JS file
         dest: 'dist/js/<%= pkg.name %>.js'
       },
@@ -42,29 +48,6 @@ module.exports = function(grunt) {
         }
       }
     },
-//    browserify: {
-//      dist: {
-//        files: {
-//          'dist/js/index.js': [
-//            'js/**/*.js',
-//            '!js/main.js'
-//          ]
-//        }
-//      },
-//      dev: {
-//        files: {
-//          'dist/js/index.js': [
-//            'js/**/*.js',
-//            '!js/main.js'
-//          ]
-//        },
-//        option: {
-//          browserifyOptions: {
-//            debug: true
-//          }
-//        }
-//      }
-//    },
     requirejs: {
       dist: {
         options: {
@@ -99,9 +82,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-karma');
+  grunt.loadNpmTasks('grunt-wiredep');
   //grunt.loadNpmTasks('grunt-browserify');
 
-  grunt.registerTask('default', ['clean', 'jshint']);
-  //grunt.registerTask('default', ['jshint', 'requirejs']);
+  grunt.registerTask('build', ['clean', 'jshint', 'wiredep', 'concat', 'uglify', 'requirejs']);
+  grunt.registerTask('default', ['clean', 'jshint', 'wiredep']);
   grunt.registerTask('test', ['clean', 'jshint', 'karma']);
 };

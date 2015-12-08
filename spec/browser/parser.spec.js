@@ -1,4 +1,4 @@
-define(['../../js/parser.js'], function (parser) {
+define(['../../app/js/parser.js'], function (parser) {
   'use strict';
 
   // ****** Syntax Checker tests ****** //

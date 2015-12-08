@@ -37,7 +37,7 @@ define(function () {
 
   // Get the data on message reception and notify the appropriate Promise
   function listener(message) {
-    console.log("--> ", message);
+    console.log('--> ', message);
     // Mirobot just answered, to is not busy anymore
     _mirobotState = false;
     // If an object exists with callback_id in our _callbacks object, resolve it
@@ -68,7 +68,7 @@ define(function () {
     //console.log('Sending request', request);
     if (_ws.readyState === _ws.OPEN) {
       _mirobotState = true;
-      console.log("<-- ", request);
+      console.log('<-- ', request);
       _ws.send(JSON.stringify(request));
     } else {
       var callback = _callbacks[request.id.toString()];
@@ -115,7 +115,7 @@ define(function () {
   Service.messageHandler = function (messageObj) {
     console.log('WARNING! message received without a valid callback ID: ',
                 messageObj);
-    console.log("Pensing request:");
+    console.log('Pensing request:');
     console.log(_callbacks);
   };
 

@@ -8,7 +8,7 @@ wss.on('connection', function connection(ws) {
     console.log('--> %s', message);
     message = JSON.parse(message);
     // Send the callback
-    var data = JSON.stringify({ id: message.id });
+    var data = JSON.stringify({ id: message.id, status: 'complete' });
     console.log('<--', data);
     ws.send(data);
   });

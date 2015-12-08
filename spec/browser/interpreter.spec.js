@@ -1,4 +1,4 @@
-define(['../../js/interpreter.js'], function (interpreter) {
+define(['../../app/js/interpreter.js'], function (interpreter) {
   'use strict';
 
   var mockMirobotService = {

@@ -1,4 +1,4 @@
-define(['../../js/mirobot-service.js'], function (mirobotService) {
+define(['../../app/js/mirobot-service.js'], function (mirobotService) {
   'use strict';
 
   // connect
@@ -23,7 +23,7 @@ define(['../../js/mirobot-service.js'], function (mirobotService) {
       // Generate a message from the WebSocket server with the provided
       // callback id
       sendResponse: function(id) {
-        this.onmessage({ data: JSON.stringify({ id: id }) });
+        this.onmessage({ data: JSON.stringify({ id: id.toString(), status: 'complete' }) });
       }
     };
     var mockCallBack = {
