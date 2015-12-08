@@ -51,14 +51,26 @@ module.exports = function(grunt) {
     requirejs: {
       dist: {
         options: {
-          baseUrl: '.',
+          baseUrl: 'app/js/',
           out: 'dist/js/app.js',
-          include: 'js/logofr',
-          name: 'node_modules/almond/almond',
+          include: 'logofr',
+          name: '../../node_modules/almond/almond',
           inlineText: true,
           findNestedDependencies: true,
-          optimize: 'ulgify'
+          optimize: 'uglify'
         }
+      }
+    },
+    copy: {
+      dist: {
+        files: [
+          {
+            expand: true,
+            flatten: true,
+            src: ['app/index.html'],
+            dest: 'dist/'
+          }
+        ]
       }
     },
     karma: {
@@ -69,6 +81,34 @@ module.exports = function(grunt) {
     watch: {
       files: ['<%= jshint.file.src %>'],
       tasks: ['jshint']
+    },
+    // The actual grunt server settings
+    connect: {
+      options: {
+        port: 9042,
+        // Change this to '0.0.0.0' to access the server from outside.
+        hostname: '0.0.0.0',
+        livereload: 35729
+      },
+      livereload: {
+        options: {
+          open: true,
+        }
+      },
+      dist: {
+        options: {
+          open: false,
+          base: 'dist',
+          keepalive: true,
+          middleware: function(connect) {
+            return [
+              connect.static('.tmp'),
+              connect().use('/bower_components', connect.static('./bower_components')),
+              connect.static('app')
+            ];
+          }
+        }
+      }
     },
     clean: { dist: [
       'dist',
@@ -83,9 +123,19 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-wiredep');
-  //grunt.loadNpmTasks('grunt-browserify');
+  grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-contrib-copy');
 
-  grunt.registerTask('build', ['clean', 'jshint', 'wiredep', 'concat', 'uglify', 'requirejs']);
+  // uglify removed as not supporting ES6
+  grunt.registerTask('build', [
+    'clean',
+    'jshint',
+    'wiredep',
+    'concat',
+    'requirejs',
+    'copy'
+  ]);
   grunt.registerTask('default', ['clean', 'jshint', 'wiredep']);
   grunt.registerTask('test', ['clean', 'jshint', 'karma']);
+  grunt.registerTask('serve', ['build', 'connect:dist']);
 };
