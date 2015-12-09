@@ -1,3 +1,12 @@
 .code {
-  font-family: Courrier
+  font-family: Courier New
+}
+
+.header-row {
+  margin-top: 20px;
+  margin-bottom: 15px;
+}
+
+.title {
+  font-size: 24px;
 }
