@@ -6,4 +6,9 @@ before_script:
     - npm install bower -g
     - npm install jasmine -g
     - bower install
-
+notifications:
+  email:
+    recipients:
+      - jean.daniel.michaud@gmail.com
+        on_success: never
+        on_failure: always
