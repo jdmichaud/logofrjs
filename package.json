@@ -37,6 +37,7 @@
     "karma-phantomjs-launcher": "^0.2.1",
     "karma-requirejs": "^0.2.2",
     "phantomjs": "^1.9.18",
+    "serve-static": "^1.10.0",
     "ws": "^0.8.1"
   },
   "dependencies": {

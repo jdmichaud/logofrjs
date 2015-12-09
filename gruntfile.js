@@ -1,6 +1,8 @@
 module.exports = function(grunt) {
   'use strict';
 
+  var serveStatic = require('serve-static');
+
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     jshint: {
@@ -87,8 +89,9 @@ module.exports = function(grunt) {
       options: {
         port: 9042,
         // Change this to '0.0.0.0' to access the server from outside.
-        hostname: '0.0.0.0',
-        livereload: 35729
+        hostname: '3.249.251.56',
+        livereload: 35729,
+        debug: true
       },
       livereload: {
         options: {
@@ -102,9 +105,8 @@ module.exports = function(grunt) {
           keepalive: true,
           middleware: function(connect) {
             return [
-              connect.static('.tmp'),
-              connect().use('/bower_components', connect.static('./bower_components')),
-              connect.static('app')
+              serveStatic('dist'),
+              connect().use('/bower_components', serveStatic('./bower_components'))
             ];
           }
         }
