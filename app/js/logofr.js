@@ -20,7 +20,10 @@ require(['./parser'], function(parser) {
 
   httpGetAsync('/logo.peg', function () {
     console.log('Ready to parse');
+    angular.module('turtleApp').factory('MirobotService', parser);
   }, function () {
     console.log('Could not load the logo grammar file');
+    alert('Un probleme est survenu lors du chargement de la page');
   });
+
 });
