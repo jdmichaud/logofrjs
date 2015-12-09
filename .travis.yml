@@ -10,5 +10,6 @@ notifications:
   email:
     recipients:
       - jean.daniel.michaud@gmail.com
-        on_success: never
-        on_failure: always
+      - jdmichaud@users.noreply.github.com
+    on_success: never
+    on_failure: always
