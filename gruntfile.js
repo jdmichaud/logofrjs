@@ -69,7 +69,7 @@ module.exports = function(grunt) {
           {
             expand: true,
             flatten: true,
-            src: ['app/index.html'],
+            src: ['app/index.html', 'grammar/logo.peg'],
             dest: 'dist/'
           },
           {

@@ -18,7 +18,7 @@ require(['./parser'], function(parser) {
     xmlHttp.send(null);
   };
 
-  httpGetAsync('/grammar.peg', function () {
+  httpGetAsync('/logo.peg', function () {
     console.log('Ready to parse');
   }, function () {
     console.log('Could not load the logo grammar file');
