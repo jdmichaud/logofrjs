@@ -3,5 +3,7 @@ node_js:
     - "5.0"
 before_script:
     - npm install grunt-cli -g
+    - npm install bower -g
+    - npm install jasmine -g
     - bower install
 
