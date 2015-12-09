@@ -71,6 +71,12 @@ module.exports = function(grunt) {
             flatten: true,
             src: ['app/index.html'],
             dest: 'dist/'
+          },
+          {
+            expand: true,
+            cwd: 'app/',
+            src: ['styles/**/*'],
+            dest: 'dist/'
           }
         ]
       }
