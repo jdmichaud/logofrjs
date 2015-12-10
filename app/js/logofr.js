@@ -105,21 +105,27 @@ require(['./mirobot-service', 'mirobot-adapter', 'interpreter', './parser'],
       mirobotService.connect($scope.mirobotip, 8899, function () {
         // on open
         console.log('Mirobot connection open');
-        $scope.bougeDisabled = false;
-        $scope.appelerDisabled = true;
-        $scope.messageTortue = 'J\'ecoute !';
+        $scope.$apply(function() {
+          $scope.bougeDisabled = false;
+          $scope.appelerDisabled = true;
+          $scope.messageTortue = 'J\'ecoute !';
+        });
       }, function () {
         // on close
         console.log('Mirobot connection closed');
-        $scope.bougeDisabled = false;
-        $scope.appelerDisabled = true;
-        $scope.messageTortue = 'zzZZzzz..oOo..o....';
+        $scope.$apply(function() {
+          $scope.bougeDisabled = true;
+          $scope.appelerDisabled = false;
+          $scope.messageTortue = 'zzZZzzz..oOo..o....';
+        });
       }, function () {
         // on error
         console.log('Mirobot connection error');
-        $scope.bougeDisabled = false;
-        $scope.appelerDisabled = true;
-        $scope.messageTortue = 'zzZZzzz..oOo..o....';
+        $scope.$apply(function() {
+          $scope.bougeDisabled = true;
+          $scope.appelerDisabled = false;
+          $scope.messageTortue = 'zzZZzzz..oOo..o....';
+        });
       });
     };
 
