@@ -51,7 +51,7 @@ requirejs(['fs', 'ws', 'commander', '../../package.json', 'parser',
     }
     console.log(filename);
     // Parse the loaded file
-    var parseRet = parser.parse(fs, PEG, visitor, content, logoGrammar, debug);
+    var parseRet = parser.parse(PEG, visitor, content, logoGrammar, debug);
     if (parseRet.err) {
       // Error while walking the AST
       console.log(parseRet.err);

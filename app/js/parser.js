@@ -14,11 +14,10 @@ define(['instruction'], function(instruction) {
   };
 
   return {
-    // fs - filesystem
     // content - string containing the text to parse
     // debug - boolean indicating if pegjs shall output debugging information
     // returns the AST
-    parse: function(fs, PEG, visitor, content, logoGrammar, debug) {
+    parse: function(PEG, visitor, content, logoGrammar, debug) {
       // No debug by default
       if (debug === undefined) { debug = false; }
       // Build parser from grammar

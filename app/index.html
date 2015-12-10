@@ -14,28 +14,28 @@
     <link rel="stylesheet" href="styles/style.css" />
   </head>
 
-  <body ng-app="turtleApp" ng-controller="TurtleCtrl">
-    <div class='container'>
+  <body>
+    <div class="container" ng-controller="TurtleCtrl">
       <div class="row header-row">
         <div class="col-md-6">
-          <div class='title'>Allo tortue?</div>
+          <div class='title'>{{ messageTortue }}</div>
         </div>
         <div class="col-md-6">
-          <form class="form-inline text-right">
+          <form class="form-inline text-right" action="">
             <div class="form-group">
-              <input type="text" class="form-control" id="mirobotip" placeholder="Adresse de Mirobot">
+              <input type="text" class="form-control" id="mirobotip" placeholder="Adresse de la tortue" ng-model="mirobotip">
             </div>
             <div class="form-group">
-              <button type="submit" class="btn btn-default">Appeler</button>
+              <button type="button" class="btn btn-default" ng-disabled="appelerDisabled" ng-click="connect()">Appeler la tortue</button>
             </div>
           </div>
         </div>
-      <form>
+      <form action="">
         <div class="form-group">
-          <textarea class="form-control code" rows="15"></textarea>
+          <textarea class="form-control code" rows="15" ng-model="content"></textarea>
         </div>
         <div class="form-group">
-          <button type="submit" class="btn btn-primary">Bouge tortue !</button>
+          <button type="button" class="btn btn-primary" ng-disabled="bougeDisabled">Bouge tortue !</button>
         </div>
       </form>
     </div>
