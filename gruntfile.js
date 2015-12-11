@@ -59,7 +59,9 @@ module.exports = function(grunt) {
           name: '../../node_modules/almond/almond',
           inlineText: true,
           findNestedDependencies: true,
-          optimize: 'uglify'
+          optimize: 'none',
+          generateSourceMaps: true,
+          preserveLicenseComments: false
         }
       }
     },
