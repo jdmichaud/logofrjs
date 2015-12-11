@@ -2,8 +2,9 @@
 //
 // Main entry point for logofrjs in the Browser
 
-require(['./mirobot-service', 'mirobot-adapter', 'interpreter', './parser'],
-        function(mirobotService, adapterFactory, interpreter, parser) {
+require(['mirobot-service', 'controllers/turtle-ctrl',
+         'services/interpreter-service', 'services/file-retrieval-service'],
+        function(mirobotService, TurtleCtrl, interpreterService, fileRetrievalService) {
   'use strict';
 
   // Create the angular module
@@ -16,148 +17,19 @@ require(['./mirobot-service', 'mirobot-adapter', 'interpreter', './parser'],
   });
 
   // Register the interpreter service
-  turtleApp.factory('InterpreterService', function () {
-    // Create an adapter plugged to the websocket service
-    var adapter = adapterFactory.createAdapter(mirobotService);
-    return {
-      interpret: function (content, logoGrammar) {
-        // Parse the loaded file
-        var parseRet = parser.parse(PEG, PEG.visitor, content, logoGrammar, false);
-        if (parseRet.err) {
-          // Error while walking the AST
-          console.log(parseRet.err);
-          return parseRet;
-        } else {
-          // Check the syntax of the parsed AST
-          var syntaxCheckRet = parser.syntaxCheck(PEG.visitor, parseRet.ast);
-          if (syntaxCheckRet.errno !== 0) {
-            console.log('Error(' , syntaxCheckRet.errno, '): ',
-                        syntaxCheckRet.err);
-            return syntaxCheckRet;
-          }
-          // Normalize the AST
-          parseRet.ast = parser.normalize(PEG.visitor, parseRet.ast);
-          // Interpret the AST and issue mirobot command
-          interpreter.interpret(PEG.visitor, adapter, parseRet.ast);
-          return { errno: 0, err: '' };
-        }
-      }
-    };
-  });
+  turtleApp.factory('InterpreterService', ['MirobotService', function (mirobotService) {
+    return interpreterService(mirobotService);
+  }]);
 
   // Register the file retrieval service. There must be a better way for this...
   turtleApp.factory('FileRetrievalService', function () {
-    var httpGetAsync = function (url, callback, waitcb, errorcb) {
-      var xmlHttp = new XMLHttpRequest();
-      xmlHttp.onreadystatechange = function() {
-        if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
-          callback(xmlHttp.responseText);
-        } else if (xmlHttp.status === 200 || xmlHttp.status === 0) { // No particular error, just busy...
-          waitcb();
-        } else {
-          errorcb(xmlHttp.status);
-        }
-      };
-      xmlHttp.open('GET', url, true); // true for asynchronous
-      xmlHttp.send(null);
-    };
-
-    return {
-      retrieve: function (url) {
-        var promise = new Promise(function(resolve, reject) {
-//          httpGetAsync('/logo.peg', function (logoGrammar) {
-          httpGetAsync(url, function (fileContent) {
-            console.log('Ready to parse');
-            resolve(fileContent);
-          }, function () {
-            console.log('Grammar loading...');
-          }, function (httpStatus) {
-            console.log('Could not load the logo grammar file, status: ',
-                        httpStatus);
-            reject(httpStatus);
-          });
-        });
-        return promise;
-      }
-    };
+    return fileRetrievalService();
   });
 
-  // Main controlle1r
-  turtleApp.controller('TurtleCtrl', ['$scope', 'MirobotService',
-                                      'InterpreterService', 'FileRetrievalService',
-                                      function ($scope, mirobotService,
-                                                interpreter, fileRetrievalService) {
-    var grammar = '';
-
-    var reinitError = function () {
-      $scope.errno = 0;
-      $scope.err = '';
-    };
-
-    var reinitMessageTortue = function () {
-      if ($scope.connected) {
-        $scope.messageTortue = 'J\'ecoute';
-      } else {
-        $scope.messageTortue = 'zzZZzzz..oOo..o....';
-      }
-    };
-
-    // Initialize the scope
-    $scope.mirobotip = '';
-    $scope.content = '';
-    $scope.connected = false;
-    reinitError();
-    reinitMessageTortue();
-    // Retrieve the grammar on the server
-    fileRetrievalService.retrieve('/logo.peg').then(function (grammarLoaded) {
-      grammar = grammarLoaded;
-    });
-
-    // Connect the mirobot
-    $scope.connect = function () {
-      console.log('connect called');
-      mirobotService.connect($scope.mirobotip, 8899, function () {
-        // on open
-        console.log('Mirobot connection open');
-        $scope.$apply(function() {
-          reinitError();
-          reinitMessageTortue();
-          $scope.connected = true;
-        });
-      }, function () {
-        // on close
-        console.log('Mirobot connection closed');
-        $scope.$apply(function() {
-          reinitError();
-          reinitMessageTortue();
-          $scope.connected = false;
-        });
-      }, function () {
-        // on error
-        console.log('Mirobot connection error');
-        $scope.$apply(function() {
-          reinitError();
-          reinitMessageTortue();
-          $scope.connected = false;
-        });
-      });
-    };
-
-    // Execute the program
-    $scope.execute = function () {
-      reinitError();
-      $scope.messageTortue = 'Je travaille';
-      var ret = interpreter.interpret($scope.content, grammar);
-      if (ret.errno !== 0) {
-        $scope.messageTortue = 'Oops !...';
-        $scope.errno = ret.errno;
-        $scope.err = ret.err;
-      } else {
-        reinitMessageTortue();
-      }
-    };
-
-  }]);
+  angular.module('turtleApp').controller(
+    'TurtleCtrl',
+    ['$scope', 'MirobotService', 'InterpreterService', 'FileRetrievalService', TurtleCtrl]
+  );
 
   // Because angular is loaded in the require function, we cannot plug the
   // application in the view through the ng-app directive. So we initialize
