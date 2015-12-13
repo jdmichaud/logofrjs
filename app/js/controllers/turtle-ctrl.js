@@ -3,7 +3,7 @@ define(function () {
   'use strict';
 
   // Main controlle1r
-  var TurtleCtrl = function TutrleCtrl($scope, mirobotService, interpreter, fileRetrievalService) {
+  var TurtleCtrl = function TurtleCtrl($scope, mirobotService, interpreter, fileRetrievalService) {
     var grammar = '';
 
     var reinitError = function () {
@@ -57,7 +57,7 @@ define(function () {
           reinitMessageTortue();
           $scope.connected = false;
         });
-      });
+      }, 'websocket');
     };
 
     // Execute the program
