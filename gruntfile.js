@@ -10,7 +10,9 @@ module.exports = function(grunt) {
         src: [
           'gruntfile.js',
           'app/js/**/*.js',
-          'spec/**/*.js'
+          'spec/**/*.js',
+          '!spec/unit/requirejs-setup.js',
+          '!spec/unit/requirejs-wrapper-template.js'
         ]
       },
       options: {

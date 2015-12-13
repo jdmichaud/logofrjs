@@ -4,7 +4,7 @@
   "description": "A french logo front end for mirobot v2",
   "main": "main.js",
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt test && node_modules/jasmine-node/bin/jasmine-node --runWithRequireJs --requireJsSetup spec/unit/requirejs-setup.js spec/unit/"
   },
   "keywords": [
     "mirobot",
