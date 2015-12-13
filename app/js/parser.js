@@ -37,7 +37,7 @@ define(['instruction'], function(instruction) {
           return {err: exception, errno: eErrCode.UNKNOWN_ERROR, ast: {}};
         }
       }
-      return {err: undefined, ast: ast};
+      return {errno: 0, err: undefined, ast: ast};
     },
 
     // Analyze the AST to ensure the syntax is correct:

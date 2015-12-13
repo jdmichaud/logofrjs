@@ -4,7 +4,7 @@
 
 require(['mirobot-service', 'controllers/turtle-ctrl',
          'services/interpreter-service', 'services/file-retrieval-service'],
-        function(mirobotService, TurtleCtrl, interpreterService, fileRetrievalService) {
+         function(mirobotService, TurtleCtrl, interpreterService, fileRetrievalService) {
   'use strict';
 
   // Create the angular module
