@@ -1,0 +1,4 @@
+// Have the argument after a newline is not OK
+AV 10 TD
+90
+

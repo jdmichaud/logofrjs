@@ -12,5 +12,5 @@ notifications:
     recipients:
       - jean.daniel.michaud@gmail.com
       - jdmichaud@users.noreply.github.com
-    on_success: never
+    on_success: change
     on_failure: always

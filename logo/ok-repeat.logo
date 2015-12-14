@@ -1,0 +1,9 @@
+// Standard repeat loop
+REPETE 8 [
+  AV 10
+  TD 5
+]
+// Will repeat only one instruction in absence of the []
+repete 12
+RECULE 8
+
