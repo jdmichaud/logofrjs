@@ -45,7 +45,13 @@ define(['../../app/js/parser.js'], function (parser) {
           { type: 'INSTRUCTION', command: 'AVANCE', arg: 10, line: 2 },
           { type: 'INSTRUCTION', command: 'TD', arg: 90, line: 3 },
           { type: 'INSTRUCTION', command: 'av', arg: 10, line: 4 },
-          { type: 'INSTRUCTION', command: 'levecrayon', line: 5 }
+          { type: 'INSTRUCTION', command: 'levecrayon', line: 5 },
+          { type: 'REPEAT', line: 6, instructions: [
+            { type: 'LIST', line: 6, instructions: [
+              { type: 'INSTRUCTION', command: 'AVANCE', arg: 10, line: 7 },
+              { type: 'INSTRUCTION', command: 'TD', arg: 90, line: 8 }
+            ] }
+          ] },
         ]
       })).toEqual(jasmine.objectContaining({
         errno: 0
