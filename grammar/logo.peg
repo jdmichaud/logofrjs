@@ -34,6 +34,24 @@ sourceCharacter
 comment
   = "//" (!newline sourceCharacter)*
 
+repeat_loop =
+  ("REPETE" / "repete") _ digits:integer newline? i:instruction_list {
+    return {
+      type: "REPEAT",
+      instructions: i,
+      line: location().start.line
+    }
+  }
+
+instruction_list =
+  "[" _ newline? i: ( instruction ) * "]" {
+    return {
+      type: "LIST",
+      instruction: i,
+      line: location().start.line
+    }
+  }
+
 arg_instruction =
   k:keyword _ digits:integer _ newline? {
     return {
@@ -54,7 +72,7 @@ noarg_instruction =
   }
 
 null_instruction =
-  comment _? newline? {
+  comment _? newline {
     return { type: "NOOP" };
   }
   / _? newline {
@@ -66,3 +84,5 @@ instruction =
   null_instruction
   / arg_instruction
   / noarg_instruction
+  / instruction_list
+  / repeat_loop
