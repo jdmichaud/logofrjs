@@ -77,8 +77,11 @@ requirejs(['fs', 'ws', 'commander', '../../package.json', 'parser',
     var adapter = adapterFactory.createAdapter(mirobotService);
     // Read files passed as parameter and interpret them
     for (let filename of program.args.slice(0, program.args.length - 1)) {
-      runFile(filename, fs, parser, adapter, interpreter,
-              PEG, visitor, program.debug);
+      let ret = runFile(filename, fs, parser, adapter, interpreter,
+                        PEG, visitor, program.debug);
+      if (ret !== 0) {
+        return ret
+      }
     }
   };
 
@@ -96,10 +99,14 @@ requirejs(['fs', 'ws', 'commander', '../../package.json', 'parser',
     var mirobotIP = program.args.slice(program.args.length - 1);
     mirobotService.connect(mirobotIP, 8899, function () {
                              // On connection, execute the files
-                             onWebSocketConnection(program);
-                             // Close the wesocket connections once all requests
-                             // have been processed by mirobot
-                             mirobotService.close(true);
+                             if (onWebSocketConnection(program) === 0) {
+                               // Close the wesocket connections once all requests
+                               // have been processed by mirobot
+                               mirobotService.close(true);
+                             } else {
+                               // Force close on error
+                               mirobotService.close(false);
+                             }
                            }, function () {
                              console.log('Program terminated.');
                            }, function (err) {
