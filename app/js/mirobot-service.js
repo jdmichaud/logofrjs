@@ -59,8 +59,8 @@ define(function () {
       // Else call the default callback
       Service.messageHandler(message);
     }
-    // If no more message to be processed and close requested
-    if (_msgQueue.length === 0 && _closeRequestPending) {
+    // If no more callbacks to be processed and close requested
+    if (Object.keys(_callbacks).length === 0 && _closeRequestPending) {
       forceClose();
     }
   }
