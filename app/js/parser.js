@@ -10,6 +10,7 @@ define(['instruction'], function(instruction) {
     UNKNOWN_INSTRUCTION: 2,
     MISSING_ARGUMENT: 3,
     USELESS_ARGUMENT: 4,
+    REPEAT_LOOP_WO_ARG: 5,
     UNKNOWN_ERROR: 255
   };
 
@@ -61,6 +62,12 @@ define(['instruction'], function(instruction) {
           return { errno: 0, err: '' };
         },
         INSTRUCTION: function(node) {
+          // Check for REPETE keyword with no argument
+          if (node.command === 'REPETE') {
+            return { errno: eErrCode.REPEAT_LOOP_WO_ARG,
+                     err: 'Ligne ' + node.line +
+                       ': Vous devez indiquer un nombre d\'iterations a REPETE' };
+          }
           // Check for unknown instruction
           var matching = instruction.getMatchingInstruction(node.command);
           if (matching === undefined) {
@@ -83,6 +90,12 @@ define(['instruction'], function(instruction) {
           return { errno: 0, err: '' };
         },
         NOOP: function(node) { /* quietly ignored */
+          return { errno: 0, err: '' };
+        },
+        REPEAT: function(node) { /* quietly ignored */
+          return { errno: 0, err: '' };
+        },
+        LIST: function(node) { /* quietly ignored */
           return { errno: 0, err: '' };
         }
       });
@@ -119,6 +132,22 @@ define(['instruction'], function(instruction) {
           return node;
         },
         NOOP: function(node) { /* quietly ignored */
+          return node;
+        },
+        REPEAT: function(node) { /* quietly ignored */
+          node.instruction = normalizeVisit(node.instruction);
+          return node;
+        },
+        LIST: function(node) { /* quietly ignored */
+          var normedInstructions = [];
+          for (var i = 0; i < node.instructions.length; i++) {
+            var instruction = normalizeVisit(node.instructions[i]);
+            // filter out NOOP node
+            if (instruction.type !== 'NOOP') {
+              normedInstructions.push(instruction);
+            }
+          }
+          node.instructions = normedInstructions;
           return node;
         }
       });

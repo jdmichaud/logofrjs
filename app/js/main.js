@@ -32,7 +32,7 @@ requirejs(['fs', 'ws', 'commander', '../../package.json', 'parser',
 
   // Take a filename, load the file and execute the logo program
   var runFile = function(filename, fs, parser, adapter, interpreter,
-                         PEG, visitor, debug) {
+                         PEG, visitor, debug, displayAst) {
     var content;
     var logoGrammar;
     try {
@@ -57,6 +57,10 @@ requirejs(['fs', 'ws', 'commander', '../../package.json', 'parser',
       console.log(parseRet.err);
       return parseRet.errno;
     } else {
+      // Display the AST if requested
+      if (displayAst) {
+        console.log(util.inspect(parseRet.ast, {showHidden: false, depth: null}));
+      }
       // Check the syntax of the parsed AST
       var syntaxCheckRet = parser.syntaxCheck(visitor, parseRet.ast);
       if (syntaxCheckRet.errno !== 0) {
@@ -78,9 +82,9 @@ requirejs(['fs', 'ws', 'commander', '../../package.json', 'parser',
     // Read files passed as parameter and interpret them
     for (let filename of program.args.slice(0, program.args.length - 1)) {
       let ret = runFile(filename, fs, parser, adapter, interpreter,
-                        PEG, visitor, program.debug);
+                        PEG, visitor, program.debug, program.displayAst);
       if (ret !== 0) {
-        return ret
+        return ret;
       }
     }
   };
@@ -89,6 +93,7 @@ requirejs(['fs', 'ws', 'commander', '../../package.json', 'parser',
   program
     .version(pjson.version)
     .option('-d, --debug', 'Debug grammar')
+    .option('-a, --display-ast', 'Display the resulting AST after parsing')
     .parse(process.argv);
   // Check number of argumentsi
   if (program.args.length < 2) {

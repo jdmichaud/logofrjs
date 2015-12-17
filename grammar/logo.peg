@@ -35,10 +35,19 @@ comment
   = "//" (!newline sourceCharacter)*
 
 repeat_loop =
-  ("REPETE" / "repete") _ digits:integer newline? i:instruction_list {
+  ("REPETE" / "repete") _ digits:integer newline? _ i:instruction_list {
     return {
       type: "REPEAT",
-      instructions: i,
+      instruction: i,
+      iteration: parseInt(digits.join(""), 10),
+      line: location().start.line
+    }
+  }
+  / ("REPETE" / "repete") _ digits:integer newline? _ i:instruction {
+    return {
+      type: "REPEAT",
+      instruction: i,
+      iteration: parseInt(digits.join(""), 10),
       line: location().start.line
     }
   }
@@ -47,13 +56,13 @@ instruction_list =
   "[" _ newline? i: ( instruction ) * "]" {
     return {
       type: "LIST",
-      instruction: i,
+      instructions: i,
       line: location().start.line
     }
   }
 
 arg_instruction =
-  k:keyword _ digits:integer _ newline? {
+  _ k:keyword _ digits:integer _ newline? {
     return {
       type: "INSTRUCTION",
       command: k,
@@ -72,7 +81,7 @@ noarg_instruction =
   }
 
 null_instruction =
-  comment _? newline {
+  comment _? newline? {
     return { type: "NOOP" };
   }
   / _? newline {
@@ -82,7 +91,7 @@ null_instruction =
 // Define what is an instruction
 instruction =
   null_instruction
+  / repeat_loop
   / arg_instruction
   / noarg_instruction
   / instruction_list
-  / repeat_loop

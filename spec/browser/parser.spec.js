@@ -37,6 +37,24 @@ define(['../../app/js/parser.js'], function (parser) {
       }));
     });
 
+    it('shall return 5 if a REPEAT loop has no counter', function () {
+      expect(parser.syntaxCheck(PEG.visitor, {
+        type: 'PROGRAM',
+        instructions: [
+          { type: 'INSTRUCTION',
+            command: 'REPETE',
+            interation: 6,
+            line: 13,
+            instructions: [
+              { type: 'INSTRUCTION', command: 'AV', arg: '10', line: 14 }
+            ]
+          }
+        ]
+      })).toEqual(jasmine.objectContaining({
+        errno: 5
+      }));
+    });
+
     it('shall return 0 on properly formed abstract syntax tree', function () {
       expect(parser.syntaxCheck(PEG.visitor, {
         type: 'PROGRAM',
@@ -46,7 +64,7 @@ define(['../../app/js/parser.js'], function (parser) {
           { type: 'INSTRUCTION', command: 'TD', arg: 90, line: 3 },
           { type: 'INSTRUCTION', command: 'av', arg: 10, line: 4 },
           { type: 'INSTRUCTION', command: 'levecrayon', line: 5 },
-          { type: 'REPEAT', line: 6, instructions: [
+          { type: 'REPEAT', line: 6, interation: 8, instructions: [
             { type: 'LIST', line: 6, instructions: [
               { type: 'INSTRUCTION', command: 'AVANCE', arg: 10, line: 7 },
               { type: 'INSTRUCTION', command: 'TD', arg: 90, line: 8 }
@@ -70,12 +88,14 @@ define(['../../app/js/parser.js'], function (parser) {
           { type: 'INSTRUCTION', command: 'TD', arg: 90, line: 3 },
           { type: 'INSTRUCTION', command: 'av', arg: 10, line: 4 },
           { type: 'INSTRUCTION', command: 'levecrayon', line: 5 },
-          { type: 'REPEAT', line: 6, instructions: [
-            { type: 'LIST', line: 6, instructions: [
-              { type: 'INSTRUCTION', command: 'av', arg: 10, line: 7 },
-              { type: 'INSTRUCTION', command: 'TD', arg: 90, line: 8 }
-            ] }
-          ] },
+          { type: 'REPEAT', line: 6, iteration: 3,
+            instruction: {
+              type: 'LIST', line: 6, instructions: [
+                { type: 'INSTRUCTION', command: 'av', arg: 10, line: 7 },
+                { type: 'INSTRUCTION', command: 'TD', arg: 90, line: 8 }
+              ]
+            }
+          }
         ]
       })).toEqual({
         type: 'PROGRAM',
@@ -85,15 +105,16 @@ define(['../../app/js/parser.js'], function (parser) {
           { type: 'INSTRUCTION', command: 'TOURNEDROITE', arg: 90, line: 3 },
           { type: 'INSTRUCTION', command: 'AVANCE', arg: 10, line: 4 },
           { type: 'INSTRUCTION', command: 'LEVECRAYON', line: 5 },
-          { type: 'REPEAT', line: 6, instructions: [
-            { type: 'LIST', line: 6, instructions: [
-              { type: 'INSTRUCTION', command: 'AVANCE', arg: 10, line: 7 },
-              { type: 'INSTRUCTION', command: 'TD', arg: 90, line: 8 }
-            ] }
-          ] },
+          { type: 'REPEAT', line: 6, iteration: 3,
+            instruction: {
+              type: 'LIST', line: 6, instructions: [
+                { type: 'INSTRUCTION', command: 'AVANCE', arg: 10, line: 7 },
+                { type: 'INSTRUCTION', command: 'TOURNEDROITE', arg: 90, line: 8 }
+              ]
+            }
+          }
         ]
       });
     });
-
   });
 });

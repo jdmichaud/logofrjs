@@ -6,7 +6,7 @@ require(['fs', 'pegjs', 'parser'], function (fs, PEG, parser) {
       { filename: 'logo/ko-instr-no-newline.logo',   expectedOutcome: 1 },
       { filename: 'logo/ko-missing-argument.logo',   expectedOutcome: 0 }, // Catched by the syntax checker
       { filename: 'logo/ko-negative-argument.logo',  expectedOutcome: 1 },
-      { filename: 'logo/ko-repeat-no-arg.logo',      expectedOutcome: 1 },
+      { filename: 'logo/ko-repeat-no-arg.logo',      expectedOutcome: 0 }, // Catched by the syntax checker
       { filename: 'logo/ko-two-arguments.logo',      expectedOutcome: 1 },
       { filename: 'logo/ko.logo',                    expectedOutcome: 0 }, // Catched by the syntax checker
       { filename: 'logo/ko2.logo',                   expectedOutcome: 0 }, // Catched by the syntax checker

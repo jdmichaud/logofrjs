@@ -16,7 +16,7 @@ define(function() {
     return {
       PROGRAM: function (node, visit) {
         for (var i = 0; i < node.instructions.length; i++) {
-          var ret = visit(node.instructions[i]);
+          var ret = visit(node.instructions[i], visit);
         }
         return { errno: 0, err: '' };
       },
@@ -42,6 +42,18 @@ define(function() {
       },
       NOOP: function (node, visit) {
         // NOOP ignored if any
+      },
+      REPEAT: function (node, visit) {
+        var i;
+        for (i = 0; i < node.iteration; ++i) {
+          visit(node.instruction, visit);
+        }
+      },
+      LIST: function (node, visit) {
+        var i;
+        for (i = 0; i < node.instructions.length; ++i) {
+          visit(node.instructions[i], visit);
+        }
       }
     };
   };

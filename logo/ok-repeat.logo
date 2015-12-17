@@ -3,6 +3,8 @@ REPETE 8 [
   AV 10
   TD 5
 ]
+// in line
+REPETE 23 [ AV 10 TD 45 ]
 // Will repeat only one instruction in absence of the []
 repete 12
 RECULE 8

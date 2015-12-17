@@ -65,5 +65,34 @@ define(['../../app/js/interpreter.js'], function (interpreter) {
       });
       expect(mockMirobotService.baissecrayon).toHaveBeenCalled();
     });
+    it('shall execute all the instructions in a list', function () {
+      interpreter.interpret(PEG.visitor, mockMirobotService, {
+        type: 'PROGRAM',
+        instructions: [
+          { type: 'LIST', line: 1, instructions: [
+              { type: 'INSTRUCTION', command: 'BAISSECRAYON', line: 1 },
+              { type: 'INSTRUCTION', command: 'AVANCE', arg: 100, line: 2 }
+          ]}
+        ]
+      });
+      expect(mockMirobotService.baissecrayon).toHaveBeenCalled();
+      expect(mockMirobotService.avance).toHaveBeenCalled();
+    });
+    it('shall repeatedly call the instruction list contain in a REPETE call', function () {
+      // Reinit call count
+      mockMirobotService.avance.calls.reset();
+      interpreter.interpret(PEG.visitor, mockMirobotService, {
+        type: 'PROGRAM',
+        instructions: [
+          { type: 'REPEAT',
+            iteration: 3,
+            instruction:
+              { type: 'INSTRUCTION', command: 'AVANCE', arg: 100, line: 2 }
+          }
+        ]
+      });
+      // Check both instruction has been called 3 times
+      expect(mockMirobotService.avance.calls.count()).toEqual(3);
+    });
   });
 });
