@@ -16,6 +16,7 @@ require(['fs', 'pegjs', 'parser'], function (fs, PEG, parser) {
       { filename: 'logo/ok-instr-no-newline.logo',   expectedOutcome: 0 },
       { filename: 'logo/ok-maison.logo',             expectedOutcome: 0 },
       { filename: 'logo/ok-repeat.logo',             expectedOutcome: 0 },
+      { filename: 'logo/ok-simple-loop.logo',        expectedOutcome: 0 },
       { filename: 'logo/ok-simple.logo',             expectedOutcome: 0 },
       { filename: 'logo/ok-simple2.logo',            expectedOutcome: 0 },
       { filename: 'logo/ok-square.logo',             expectedOutcome: 0 },
