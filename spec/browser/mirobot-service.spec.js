@@ -30,10 +30,12 @@ define(['../../app/js/mirobot-service.js'], function (mirobotService) {
       onopen: function() {},
       onclose: function() {},
       onerror: function() {},
+      onfinish: function() {},
     };
     var onOpenSpy;
     var onCloseSpy;
     var onErrorSpy;
+    var onFinishSpy;
     var onWebSocketSendSpy;
 
     beforeEach(function() {
@@ -48,6 +50,7 @@ define(['../../app/js/mirobot-service.js'], function (mirobotService) {
       onOpenSpy = spyOn(mockCallBack, 'onopen');
       onCloseSpy = spyOn(mockCallBack, 'onclose');
       onErrorSpy = spyOn(mockCallBack, 'onerror');
+      onFinishSpy = spyOn(mockCallBack, 'onfinish');
     });
 
     it('on call to connect, mirobotService shall connect to a web socket server specified by a address and a port', function () {
@@ -103,5 +106,38 @@ define(['../../app/js/mirobot-service.js'], function (mirobotService) {
       // Check the argument of the second call
       expect(JSON.parse(mockWebSocket.send.calls.allArgs()[1])).toEqual({ id: 2, toto: 'tutu' });
     });
+
+    it('on reception of the acknowledgement of the last queued message, mirobot service shall the onfinish callback', function () {
+      // Connect to the WebSocket mock server
+      mirobotService.connect(ip, port, mockCallBack.onopen,
+                             mockCallBack.onclose, mockCallBack.onerror, '', mockCallBack.onfinish);
+      // Call send on the service
+      mirobotService.send({ toto: 'titi' });
+      // Check onfinish has NOT been called YET
+      expect(onFinishSpy.calls.any()).toEqual(false);
+      // Simulate the callback from the WebSocket server
+      mockWebSocket.sendResponse(1);
+      // Check onfinish has been called
+      expect(onFinishSpy).toHaveBeenCalled();
+    });
+
+    it('on call to interrupt, mirobot-service shall clear it queued message', function () {
+      // Connect to the WebSocket mock server
+      mirobotService.connect(ip, port, mockCallBack.onopen,
+                             mockCallBack.onclose, mockCallBack.onerror);
+      // Queue some message
+      mirobotService.send({ toto: 'foo' });
+      mirobotService.send({ toto: 'bar' });
+      mirobotService.send({ toto: 'baz' });
+      // Simulate the callback from the WebSocket server
+      mockWebSocket.sendResponse(1);
+      // Call interrupt on the service
+      mirobotService.interrupt();
+      // Simulate the callback from the WebSocket server
+      mockWebSocket.sendResponse(2);
+      // Send should have been called only twice
+      expect(mockWebSocket.send.calls.count()).toEqual(2);
+    });
+
   });
 });

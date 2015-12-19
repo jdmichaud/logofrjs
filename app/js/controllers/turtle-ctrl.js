@@ -12,8 +12,11 @@ define(function () {
     };
 
     var reinitMessageTortue = function () {
-      if ($scope.connected) {
+      console.log('reinitMessageTortue running:', $scope.running);
+      if ($scope.connected && !$scope.running) {
         $scope.messageTortue = 'J\'ecoute';
+      } else if ($scope.running) {
+        $scope.messageTortue = 'Je travaille';
       } else {
         $scope.messageTortue = 'zzZZzzz..oOo..o....';
       }
@@ -23,12 +26,22 @@ define(function () {
     $scope.mirobotip = '';
     $scope.content = '';
     $scope.connected = false;
+    $scope.running = false;
     reinitError();
     reinitMessageTortue();
     // Retrieve the grammar on the server
     fileRetrievalService.retrieve('/logo.peg').then(function (grammarLoaded) {
       grammar = grammarLoaded;
     });
+
+    // Called when all the message sent are processed
+    $scope.finishedProcessing = function () {
+      console.log('finished processing');
+      $scope.$apply(function() {
+        $scope.running = false;
+        reinitMessageTortue();
+      });
+    };
 
     // Connect the mirobot
     $scope.connect = function () {
@@ -37,33 +50,34 @@ define(function () {
         // on open
         console.log('Mirobot connection open');
         $scope.$apply(function() {
+          $scope.connected = true;
           reinitError();
           reinitMessageTortue();
-          $scope.connected = true;
         });
       }, function () {
         // on close
         console.log('Mirobot connection closed');
         $scope.$apply(function() {
+          $scope.connected = false;
           reinitError();
           reinitMessageTortue();
-          $scope.connected = false;
         });
       }, function () {
         // on error
         console.log('Mirobot connection error');
         $scope.$apply(function() {
+          $scope.connected = false;
           reinitError();
           reinitMessageTortue();
-          $scope.connected = false;
         });
-      }, 'websocket');
+      }, 'websocket', $scope.finishedProcessing);
     };
 
     // Execute the program
     $scope.execute = function () {
       reinitError();
-      $scope.messageTortue = 'Je travaille';
+      $scope.running = true;
+      reinitMessageTortue();
       var ret = interpreter.interpret($scope.content, grammar);
       if (ret.errno !== 0) {
         $scope.messageTortue = 'Oops !...';
@@ -72,6 +86,13 @@ define(function () {
       } else {
         reinitMessageTortue();
       }
+    };
+
+    // Execute the program
+    $scope.interrupt = function () {
+      mirobotService.interrupt();
+      $scope.running = false;
+      reinitMessageTortue();
     };
   };
 

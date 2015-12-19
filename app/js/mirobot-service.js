@@ -27,6 +27,8 @@ define(function () {
   // Position this flag to close the websocket connection upon last message
   // answered
   var _closeRequestPending = false;
+  // Callback function called upon emptying the message queue
+  var _onfinish;
 
   // Upon reception of a message through the WebSocker interface, parse the json
   // and call the listener
@@ -58,6 +60,10 @@ define(function () {
     } else {
       // Else call the default callback
       Service.messageHandler(message);
+    }
+    // Once all the message are processed, callback our client
+    if (Object.keys(_callbacks).length === 0 && _onfinish !== undefined) {
+      _onfinish();
     }
     // If no more callbacks to be processed and close requested
     if (Object.keys(_callbacks).length === 0 && _closeRequestPending) {
@@ -143,7 +149,7 @@ define(function () {
   };
 
   // Connect to the mirobot
-  Service.connect = function(ip, port, onopen, onclose, onerror, suffix) {
+  Service.connect = function(ip, port, onopen, onclose, onerror, suffix, onfinish) {
     if (suffix === undefined) { suffix = ''; }
     // Reinit the module state
     reinit();
@@ -154,6 +160,7 @@ define(function () {
     _ws.onclose = onclose;
     _ws.onerror = onerror;
     _ws.onmessage = _onmessage;
+    _onfinish = onfinish;
   };
 
   Service.close = function (waitForServer) {
@@ -163,6 +170,11 @@ define(function () {
     else {
       forceClose();
     }
+  };
+
+  Service.interrupt = function (waitForServer) {
+    // Clear message queue
+    reinit();
   };
 
   return Service;
