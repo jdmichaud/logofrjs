@@ -2,9 +2,13 @@ module.exports = function(grunt) {
   'use strict';
 
   var serveStatic = require('serve-static');
-
+  var appConfig = {
+      SERVER_PORT: 9042,
+      LIVERELOAD_PORT: 35729
+  };
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    appConfig: appConfig,
     jshint: {
       file: {
         src: [
@@ -91,28 +95,33 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      files: ['<%= jshint.file.src %>'],
-      tasks: ['jshint']
+      livereload: {
+        files: [
+          '<%= jshint.file.src %>',
+          'app/**/*.html',
+          'grammar/logo.peg'
+        ],
+        tasks: ['build'],
+        options: {
+          livereload: appConfig.LIVERELOAD_PORT
+        }
+      }
     },
     // The actual grunt server settings
     connect: {
       options: {
-        port: 9042,
+        port: appConfig.SERVER_PORT,
         // Change this to '0.0.0.0' to access the server from outside.
         hostname: '0.0.0.0',
-        livereload: 35729,
+        livereload: appConfig.LIVERELOAD_PORT,
         debug: true
       },
       livereload: {
         options: {
-          open: true,
-        }
-      },
-      dist: {
-        options: {
+          livereload: true,
           open: false,
           base: 'dist',
-          keepalive: true,
+          keepalive: false,
           middleware: function(connect) {
             return [
               serveStatic('dist'),
@@ -149,5 +158,5 @@ module.exports = function(grunt) {
   ]);
   grunt.registerTask('default', ['clean', 'jshint', 'wiredep']);
   grunt.registerTask('test', ['clean', 'jshint', 'karma']);
-  grunt.registerTask('serve', ['build', 'connect:dist']);
+  grunt.registerTask('serve', ['build', 'connect:livereload', 'watch']);
 };
