@@ -72,7 +72,7 @@ arg_instruction =
   }
 
 noarg_instruction =
-  k:keyword _ newline? {
+  _ k:keyword _ newline? {
     return {
       type: "INSTRUCTION",
       command: k,
