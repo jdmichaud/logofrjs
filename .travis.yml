@@ -14,3 +14,5 @@ notifications:
       - jdmichaud@users.noreply.github.com
     on_success: change
     on_failure: always
+addons:
+    firefox: "latest"
