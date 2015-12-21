@@ -8,7 +8,8 @@ You can either use it in the browser or directly in the command line.
 Pre-requisites: node and npm shall be installed.
 
 Clone the repository:
-```git clone https://github.com/jdmichaud/logofrjs
+```
+git clone https://github.com/jdmichaud/logofrjs
 ```
 
 Download the necessary modules and components
