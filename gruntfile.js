@@ -3,8 +3,8 @@ module.exports = function(grunt) {
 
   var serveStatic = require('serve-static');
   var appConfig = {
-      SERVER_PORT: 9042,
-      LIVERELOAD_PORT: 35729
+    SERVER_PORT: 9042,
+    LIVERELOAD_PORT: 35729
   };
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -133,7 +133,27 @@ module.exports = function(grunt) {
     },
     clean: { dist: [
       'dist',
-    ]}
+    ]},
+    protractor: {
+      options: {
+        configFile: 'spec/e2e/conf.js', // Default config file
+        keepAlive: true, // If false, the grunt process stops when the test fails.
+        noColor: false, // If true, protractor will not use colors in its output.
+        args: { // Arguments passed to the command
+        }
+      },
+      e2e: {
+        options: {
+          // Stops Grunt process if a test fails
+          keepAlive: false
+        }
+      },
+      continuous: {
+        options: {
+          keepAlive: true
+        }
+      }
+    },
   });
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -146,6 +166,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-wiredep');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-protractor-runner');
 
   // uglify removed as not supporting ES6
   grunt.registerTask('build', [
@@ -159,4 +180,5 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['clean', 'jshint', 'wiredep']);
   grunt.registerTask('test', ['clean', 'jshint', 'karma']);
   grunt.registerTask('serve', ['build', 'connect:livereload', 'watch']);
+  grunt.registerTask('e2etest', ['connect:livereload', 'protractor:e2e']);
 };
