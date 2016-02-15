@@ -30,6 +30,7 @@
     "jasmine": true,
     "beforeEach": true,
     "spyOn": true,
-    "alert": true
+    "alert": true,
+    "browser": true
   }
 }
